@@ -9,14 +9,14 @@ public class RunProtocol {
 	public static void main(String[] args) throws IOException {
 		
 		// creating three nodes
-		File file = new File("E:\\model.txt") ;
+		/*File file = new File("E:\\model.txt") ;
 		AllowNode node1 =  new AllowNode("1", file); 
 		node1.buildLocalKnowlegdeModel();
 		
 		AllowNode node2 =  new AllowNode("2", file);
 		node2.buildLocalKnowlegdeModel();
 		AllowNode node3 =  new AllowNode("3", file);
-		node3.buildLocalKnowlegdeModel();
+		node3.buildLocalKnowlegdeModel();*/
 	    
 		
 		
@@ -30,10 +30,11 @@ public class RunProtocol {
 		double averageHops=0.0;
 		Files file = new Files();
 
-		System.out.println(file.FileName);
+
+		System.out.println(file.FileName);*/
 		//make new graph
 		GenerateGraph TestGraph = new GenerateGraph();
-
+/*
 		Scanner reader = new Scanner(System.in);
 		int method;
 
