@@ -1,4 +1,4 @@
-package visualization;
+package AllowModel.visualization;
 
 import java.net.*;
 
