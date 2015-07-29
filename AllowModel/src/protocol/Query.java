@@ -3,15 +3,26 @@ package protocol;
 import java.util.*;
 
 public class Query {
-	String from;
-	Files file;
-	List<String> nodeIdsVisited = new ArrayList<String>();
-	int hopCount;
-	
-	public Query(String nodeId, Files fileName){
-		from = nodeId;
-		file = fileName;
+String from; // source of ALLOW node ID
+public	double queryMean;
+public	double queryMargin;
+List<String> allowNodeIdsVisited = new ArrayList<String>();
+int hopCount;
+public List<Integer> queryScopeCRFNodes;	
+
+public Query(String allowNodeId,double queryMean,double margin,List<Integer> list){
+		
+		from = allowNodeId;
+		this.queryMean = queryMean;
+		this.queryMargin =  queryMargin;	
 		hopCount =0;
+		queryScopeCRFNodes =  list;
+		
 	}
 	
+public List<Integer> getQueryScopeCRFNodes()
+  {
+   return 	queryScopeCRFNodes;
+  }
+
 }

@@ -5,32 +5,37 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class CrfMap {
 
 	int[][] adjacencyMatrix  ; //
-	Map<Integer,ConfidenceList> confidenceMap ;
+	Map<Integer,List<ConfidenceList>> confidenceMap ;
 	int numberofCRFNodes ;
+	Map<Integer,ConfidenceList> constantConfidenceMap ;
 	
-	CrfMap(File inputfile) throws IOException
+	CrfMap(File inputfile,String allowNodeId) throws IOException
 	{
 		adjacencyMatrix  	= new int[5][5];
-		confidenceMap		= new HashMap<Integer,ConfidenceList>();
-		populateConfidenceMap(inputfile);
+		confidenceMap		= new HashMap<Integer,List<ConfidenceList>>();
+		constantConfidenceMap = new HashMap<Integer,ConfidenceList>();
+		populateConfidenceMap(inputfile, allowNodeId);
+		
 	
 	}
 	
 	public CrfMap() {
 		// TODO Auto-generated constructor stub
 		adjacencyMatrix  	= new int[5][5];
-		confidenceMap		= new HashMap<Integer,ConfidenceList>();
-		
+		confidenceMap		= new HashMap<Integer,List<ConfidenceList>>();
+		constantConfidenceMap = new HashMap<Integer,ConfidenceList>();
 	}
 
-	public void populateConfidenceMap(File inputfile) throws IOException
+	public void populateConfidenceMap(File inputfile,String allowNodeId) throws IOException
 	{
 		BufferedReader br = new BufferedReader(new FileReader(inputfile));
 	    try {
@@ -64,7 +69,13 @@ public class CrfMap {
 	        	// create confidence List 
 	        	ConfidenceList confidenceList = new	ConfidenceList(instances,mean,margin);
 	        	// create map entry with this crf node;
-	        	confidenceMap.put(crfNodeId, confidenceList);
+	        	
+	        	List<ConfidenceList> list  =   confidenceMap.get(crfNodeId);
+	        	if(list == null)
+	        		list = new ArrayList<ConfidenceList>();
+	        	
+	        	list.add(confidenceList);
+	        	confidenceMap.put(crfNodeId,list );
 	        	
 	           line = br.readLine();
 	        }
@@ -73,6 +84,8 @@ public class CrfMap {
 	    } finally {
 	        br.close();
 	    }
+	    
+	    populateconstantConfidenceMap(allowNodeId);
 	}
 	
 	public int[][] getAjdacency(){
@@ -80,20 +93,45 @@ public class CrfMap {
 		return adjacencyMatrix;
 		
 		}
-	public Map<Integer,ConfidenceList> getConfidenceMap()
+	public Map<Integer,List<ConfidenceList>> getConfidenceMap()
 	{
 		return confidenceMap;
 	}
+	 
+	public void populateconstantConfidenceMap(String allowNodeId)
+	{
+		int instancesIdofLearning = 0; // taken at index from the list of 
+		//condeinces for a particuar CRF node
+		
+		int allowNode =Integer.parseInt(allowNodeId) ;
+		instancesIdofLearning  = allowNode%10;
+	//	Set<Integer> keys = confidenceMap.keySet();
+		
+		for (Integer key : confidenceMap.keySet()) {
+			
+			ConfidenceList conListCrfNode = confidenceMap.get(key).get(instancesIdofLearning); 
+			// on different crf nodes have different instance of learning
+			constantConfidenceMap.put(key, conListCrfNode);
+			instancesIdofLearning++;
+		}
+
+	}
+	// constant for testing at certain instances at each ALLOW nodes
+	public Map<Integer,ConfidenceList> getConstantConfidenceMap()
+	{
+		return constantConfidenceMap;
+	}
+	
 	
 	public int getNumberofCRFNodes()
 	{
-		numberofCRFNodes = confidenceMap.keySet().size();
+		numberofCRFNodes = constantConfidenceMap.keySet().size();
 		return numberofCRFNodes;
 	}
 	
 	public Set<Integer> getCRFNodesIds()
 	{
-		Set<Integer> number = confidenceMap.keySet();
+		Set<Integer> number = constantConfidenceMap.keySet();
 		return number;
 	}
 }

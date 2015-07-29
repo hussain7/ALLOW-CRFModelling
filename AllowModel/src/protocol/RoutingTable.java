@@ -7,9 +7,11 @@ import java.util.Map;
 public class RoutingTable {
 	
 	Map<String,List<ScopeInformation>> neighborScopes ;  // key is neighbor ID
-	                                						// List of all scopes of specific neighbor
+	                 						// List of all scopes of specific neighbor
+	
 	public RoutingTable()
 	{
+		
 		neighborScopes =  new HashMap<String,List<ScopeInformation>>();
 		
 	}
@@ -37,6 +39,12 @@ public class RoutingTable {
 	public void mergeConfidenceonCRFNode(int CRFNodeId)
 	{
 		
+		
+	}
+
+	public boolean empty() {
+		// TODO Auto-generated method stub
+		return neighborScopes.isEmpty() ;
 	}
 	
 }

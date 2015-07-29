@@ -39,7 +39,7 @@ public class Distance extends AbstractDistance {
 
     public double measure(int nodeId1, int nodeId2,CrfMap map) {  // crf nodes
         //XXX optimize
-    	Map<Integer,ConfidenceList> confidenceMap =  map.getConfidenceMap();
+    	Map<Integer,ConfidenceList> confidenceMap =  map.getConstantConfidenceMap();
     	ConfidenceList nodeIdList1 =  confidenceMap.get(nodeId1);
     	ConfidenceList nodeIdList2 =  confidenceMap.get(nodeId2);
     	
@@ -61,10 +61,10 @@ public class Distance extends AbstractDistance {
 	public double measure(int nodeId,double mean, double margin,CrfMap map ) {
 		// TODO Auto-generated method stub
 		if(nodeId == 0) return Integer.MAX_VALUE;
-		Map<Integer,ConfidenceList> confidenceMap =  map.getConfidenceMap();
+		Map<Integer,ConfidenceList> confidenceMap =  map.getConstantConfidenceMap();
     	ConfidenceList nodeIdList =  confidenceMap.get(nodeId);
     	  double dist = 0;
-    		 System.out.println("NodeId : \n " + nodeId);
+    		// System.out.println("NodeId : \n " + nodeId);
     	  dist = distance.calculateDistance(nodeIdList.getMean(), mean
           		, nodeIdList.getMargin(), margin);
         

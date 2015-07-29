@@ -1,4 +1,5 @@
 package protocol;
+import java.awt.List;
 import java.lang.Math;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class MergeDistribution {
 		double sum_instances =0;
 		double margin_sum =0;
 		double product =1;
-		Map<Integer,ConfidenceList> confidenceMap =  map.getConfidenceMap();
+		Map<Integer,ConfidenceList > confidenceMap =  map.getConstantConfidenceMap();
 		for(int i=0; i < nodeData.length; i++){
 			if(nodeData[i] == 0) continue; // nodeid can not be zero so skip it .
 	    	ConfidenceList nodeIdList =  confidenceMap.get(nodeData[i]);

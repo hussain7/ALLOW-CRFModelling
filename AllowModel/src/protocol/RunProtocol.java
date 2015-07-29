@@ -34,7 +34,26 @@ public class RunProtocol {
 		System.out.println(file.FileName);*/
 		//make new graph
 		GenerateGraph TestGraph = new GenerateGraph();
-/*
+		for(int j=0;j< TestGraph.graph.size();j++)
+		 { 
+		   TestGraph.graph.get(j).buildLocalKnowlegdeModel();
+		   TestGraph.graph.get(j).buildRoutingModel();
+		   TestGraph.graph.get(j).sentRoutingModeltoNeighbors();
+		   
+		 }
+		// when the initial routing models are build , sent the routing infomration  and update routing tables 
+		
+		
+		
+	//	TestGraph.graph.get(1).RandomWalkWithNeighborTable(TestGraph.graph.get(1).GenerateQuery(file));
+		
+		AllowNode node = TestGraph.graph.get(3);
+		System.out.println("");
+		
+		
+/*   
+ * 
+ *//*
 		Scanner reader = new Scanner(System.in);
 		int method;
 

@@ -34,8 +34,15 @@ public class AllowNode //extends GeneralNode
 		//super(idNum);
 		nodeId = idNum;
 		neighbors = null;
-		CRFmap = new CrfMap(inputFile);
+		CRFmap = new CrfMap(inputFile,nodeId);
 		
+	}
+	public void addNeighbor(AllowNode node)
+	{  
+		if(neighbors == null){
+			neighbors= new ArrayList<AllowNode>();}
+		
+		neighbors.add(node);
 	}
 	
 	//constructor
@@ -43,21 +50,28 @@ public class AllowNode //extends GeneralNode
 		//super(idNum);
 		nodeId= idNum;
 		neighbors = nodeList;
-		CRFmap = new CrfMap(inputFile);
+		CRFmap = new CrfMap(inputFile,nodeId);
 		routingTable = new RoutingTable(); 
 		
 	}
 
-	
-	public Query GenerateQuery(Files search){
+	 
+	public List<AllowNode> getNeighbors(){
 		
+		return neighbors;
 		
-		Query query = new Query(nodeId, search);
+	}
+	public Query GenerateQuery(double queryMean,double margin){
+		
+		List<Integer> queryScopesCRFNodes = new  ArrayList<Integer>();
+		queryScopesCRFNodes.add(2, 3);
+		Query query = new Query(nodeId, queryMean,margin,queryScopesCRFNodes);
 		currentQuery =query;
 		
 		return query;
 	} // end method GenerateQuery
 
+	
 	public int[][] clusteringCrfNodes( CrfMap map)
 	{
 		 
@@ -142,16 +156,21 @@ public class AllowNode //extends GeneralNode
 		// temp map to store output
 		CrfMap tempCRFMap = new CrfMap();
 		
-		
 		for(Integer crfnodeId:crfNodesIdsList){
 			double sum_mean =0; 
 			int sum_instances =0;
 			double sum_margin =0;
-		Iterator<AllowNode> iterator = neighbors.iterator();
-		while (iterator.hasNext()) {
+		
+			if(!neighbors.isEmpty())
+			{		
+		  Iterator<AllowNode> iterator = neighbors.iterator();
+		  
+		  while (iterator.hasNext()) {
+			if(routingTable.empty())
+				break;
 			Map<String, List<ScopeInformation>> neighborScopes =
 					routingTable.getNeighborScopes();
-			List<ScopeInformation> neighborScopesList = neighborScopes.get(((AllowNode) iterator).getAllowNodeId());
+			List<ScopeInformation> neighborScopesList = neighborScopes.get( iterator.next().getAllowNodeId());
 			// merge distribution of local model and model of neighbor node
 			for(ScopeInformation scopes:neighborScopesList){
 				
@@ -169,10 +188,10 @@ public class AllowNode //extends GeneralNode
 				 
 			   }
 			 
-			iterator.next();
+			
 		   }	
 		// add with the local knowlegde part for each CRF node
-		
+	 }
 		for(ScopeInformation scopes:localModelScopes){
 			
 			  List<Integer>  nodesPresentInScope = scopes.getNodeIdswithScope();
@@ -196,8 +215,8 @@ public class AllowNode //extends GeneralNode
 		 // tempopary store new infomration of CRF nodes .
 		 
 		 
-		 ConfidenceList list = new  ConfidenceList(sum_instances,finalMeanCRFNode,finalMarginCRFNode);
-		 tempCRFMap.getConfidenceMap().put(crfnodeId, list);
+		 ConfidenceList list = new  ConfidenceList(sum_instances/noofCRFNodes,finalMeanCRFNode,finalMarginCRFNode);
+		 tempCRFMap.getConstantConfidenceMap().put(crfnodeId, list);
 		 
 		}
 		 
@@ -209,6 +228,172 @@ public class AllowNode //extends GeneralNode
 		
 	}
 	
+	
+	//Flood asks every neighbor if they have the file
+  public String Flood(Query in){
+			boolean queryAnswered = false;
+			in.allowNodeIdsVisited.add(nodeId);
+			in.hopCount++;
+           
+			
+					if( false   )   // critiria for query answer with current ALLOW node
+					queryAnswered=true;
+				
+			
+			
+			if(queryAnswered){
+				return nodeId;
+			}
+			else if(in.hopCount >= 7){
+				return "NA";
+			}
+			else{
+				if(neighbors != null){
+					for(int i= 0; i< neighbors.size(); i++){
+						
+						//zero node is special node and does not exist
+						if( ! neighbors.get(i).nodeId.equals("0")){
+							return neighbors.get(i).Flood(in);
+						}
+					}
+				}
+			}
+	
+			return "NN";  // query cant be answered
+		}
+	
+  
+//random walk uses a random walker who chooses a random node to walk to
+	public String RandomWalk(Query in){
+		//pick random neighbor to ask
+		Random rand = new Random();
+		String neighborToAsk = "0";
+		int randomIndex=-1;
+		
+		in.allowNodeIdsVisited.add(nodeId);
+		in.hopCount++;
+		
+		boolean queryAnswered=false;
+		if(neighbors == null || (neighbors.size() <= 0)){
+			return "NN";
+		}
+		else{  
+			randomIndex = rand.nextInt(neighbors.size());
+			neighborToAsk =  neighbors.get(rand.nextInt(neighbors.size())).getAllowNodeID();
+		}
+		
+		if( false   )   // critiria for query answer with current ALLOW node
+			queryAnswered=true;
+		
+		
+		if(queryAnswered){
+			return nodeId;
+		}
+		else if(in.hopCount >= 100){
+			return "NA";
+		}
+		else{
+			if(neighbors != null){
+				return neighbors.get(randomIndex).RandomWalk(in);
+			}
+		}
+		
+		return "NN";
+		
+		
+	}//end method Random Walk
+	
+	
+	/*Method RandomWalk with neighbor tables look ahead: This method checks to see if its neighbors lists of files have
+	 * the desired query within them. If so that neighbor is walked to if not it randomly choosed*/
+	public String RandomWalkWithNeighborTable(Query in){
+		//pick random neighbor to ask
+		Random rand = new Random();
+		String neighborToForward = null;
+		boolean neighborHasFile=false;
+		AllowNode neighborWithBestModel = null;
+		
+		in.allowNodeIdsVisited.add(nodeId);
+		in.hopCount++;
+		
+		boolean queryAnswered = false;
+		
+		// check if query can be answered by the current ALLOW node
+			
+		if( false   )   // critiria for query answer with current ALLOW node
+			queryAnswered=true;
+		
+		//Begin Lookup of find the neigbor which has best routing model wrt query
+		
+		neighborToForward  = "";
+		for(int i=0;i<neighbors.size();i++ ){
+		  AllowNode node = neighbors.get(i);
+		  if(true)  // condition to check neighbor routing model
+		     { 
+			  neighborWithBestModel = node;
+			  break;
+		     }
+		  }
+		    
+		
+		if(neighbors == null || (neighbors.size() <= 0)){
+			return "NA";
+		}
+		
+		if(queryAnswered){
+			return nodeId;
+		}
+		else if(in.hopCount >= 100){
+			return "NA";
+		}
+		else{
+			if(neighbors != null){
+				return neighborWithBestModel.RandomWalkWithNeighborTable(in);
+			}
+		}
+		
+		return "NN";
+		
+		
+	}//end method Random Walk with neighbor table
+	
+	
+	public void getBestNeighbor(Query in){
+		
+		List<Integer> queryCrflist = in.getQueryScopeCRFNodes();
+		// check for I node testing
+		
+		 routingTable.getNeighborScopes();
+		
+	}
+	
+	
+	
+	public void sentRoutingModeltoNeighbors()
+	{
+		
+		if(neighbors == null || (neighbors.size() <= 0)){
+			return ;
+		}
+		
+		for(int i=0;i<neighbors.size();i++ ){
+ 
+		  neighbors.get(i).receiveRoutingModelfromNeighbor( routingModel.getScopesInformation(), nodeId);
+		}
+		
+	}
+	
+	public void receiveRoutingModelfromNeighbor(List<ScopeInformation> scopeInfo , String neighborNodeId )
+	{
+		// update routing table accordingly
+		updateRoutingTable(scopeInfo , neighborNodeId);
+
+	}
+	
+   public void updateRoutingTable(List<ScopeInformation> scopeInfo , String neighborNodeId)
+   {
+	   routingTable.addEntrytoTable(neighborNodeId, scopeInfo);
+   }
 	
 	public int[] toInt(Set<Integer> set) {
 		  int[] a = new int[set.size()];
@@ -232,9 +417,9 @@ public class AllowNode //extends GeneralNode
 		
 	}
 
-	public long getID() {
+	public String getAllowNodeID() {
 		// TODO Auto-generated method stub
-		return 0;
+		return nodeId;
 	}
 
 	public int getIndex() {

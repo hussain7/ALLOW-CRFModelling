@@ -106,9 +106,9 @@ public class KMedoids {
 		int[] medoids = new int[numberOfClusters];
 		Arrays.sort(data);
 	    int min = data[0];
-	    System.out.println(min);
+	   // System.out.println(min);
 	    int max= data[data.length-1];
-	    System.out.println(max);
+	  //  System.out.println(max);
 	    
 	    // create an array for each output cluster
 		
