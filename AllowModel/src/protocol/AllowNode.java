@@ -12,6 +12,15 @@ import java.util.Set;
 
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 
+import AllowModel.clustering.KMedoids;
+import AllowModel.crf.CrfMap;
+import AllowModel.metrics.ConfidenceList;
+import AllowModel.metrics.Distance;
+import AllowModel.metrics.MergeDistribution;
+import AllowModel.metrics.ScopeInformation;
+import AllowModel.model.LocalKnowledgeModel;
+import AllowModel.model.RoutingKnowledgeModel;
+import AllowModel.model.RoutingTable;
 import peersim.config.Configuration;
 import peersim.config.FastConfig;
 import peersim.core.*;
@@ -21,8 +30,8 @@ import peersim.vector.SingleValueHolder;
 public class AllowNode //extends GeneralNode
 {
 	String nodeId;
-	Files CRFNodeFile = new Files();
-	public  CrfMap CRFmap;
+	
+	 CrfMap CRFmap;
 	List<AllowNode> neighbors= new ArrayList<AllowNode>();
 	RoutingTable routingTable  ;
 	LocalKnowledgeModel model;
@@ -150,7 +159,7 @@ public class AllowNode //extends GeneralNode
 		//get local model first //
 		List<ScopeInformation> localModelScopes = model.getScopesInformation();
 		// get remote scopes information
-		int  noofCRFNodes = CRFmap.numberofCRFNodes;
+		int  noofCRFNodes = CRFmap.getNumberofCRFNodes();
 		Set<Integer> crfNodesIdsList = CRFmap.getCRFNodesIds();
 		
 		// temp map to store output
