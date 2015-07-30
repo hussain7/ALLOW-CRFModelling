@@ -27,16 +27,16 @@ public class ConfidenceList {
 		this.margin = margin;
 	}
 	
-	int getInstance()
+	public int getInstance()
 	{
 		return instances ;
 	}
 	
-	double getMean()
+	public double getMean()
 	{
 		return mean;
 	}
-	double getMargin()
+	public double getMargin()
 	{
 		return margin;
 	}

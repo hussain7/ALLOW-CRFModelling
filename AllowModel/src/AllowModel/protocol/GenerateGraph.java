@@ -20,9 +20,9 @@ public class GenerateGraph {
 		File file = new File("E:\\model.txt") ;
 		
 		try {  // make two ajdacent nodes 
-			graph.add(new AllowNode(Integer.toString(1),null,file));
+			graph.add(new AllowNode(Integer.toString(1),file));
 			
-			graph.add(new AllowNode(Integer.toString(2),null,file));
+			graph.add(new AllowNode(Integer.toString(2),file));
 			graph.get(0).addNeighbor(graph.get(1));
 			graph.get(1).addNeighbor(graph.get(0));
 			
@@ -34,7 +34,7 @@ public class GenerateGraph {
 		for(int i=3; i<=n; i++){
 		 
 			try {
-				graph.add(new AllowNode(Integer.toString(i), GenerateNeighbors(),file));
+				graph.add(new AllowNode(Integer.toString(i),file));
 				
 			//	System.out.println("AllowNode" +i);
 			} catch (IOException e) {
@@ -43,6 +43,16 @@ public class GenerateGraph {
 			}
 		}
 
+		
+				graph.get(2).addNeighbor(graph.get(1));
+				graph.get(1).addNeighbor(graph.get(2));
+				graph.get(3).addNeighbor(graph.get(4));
+				graph.get(4).addNeighbor(graph.get(3));
+				graph.get(3).addNeighbor(graph.get(1));
+				graph.get(1).addNeighbor(graph.get(3));
+				graph.get(2).addNeighbor(graph.get(4));
+				graph.get(4).addNeighbor(graph.get(2));
+		
 		printGraph();
 		 
 	}//end constructor
@@ -76,9 +86,9 @@ public class GenerateGraph {
 	public void printGraph()
 	{
 		for(AllowNode a:graph){
-		System.out.println("\nALLOW Node:\n" + a.getAllowNodeId() );
+		System.out.println("\n ALLOW Node: " + a.getAllowNodeId() );
 		List<AllowNode> list = a.getNeighbors();
-		System.out.println("Node Neighbors:");
+		System.out.print("\n Node Neighbors:");
 		for(AllowNode n:list)
 		   {
 			System.out.print( n.getAllowNodeId() + " " );

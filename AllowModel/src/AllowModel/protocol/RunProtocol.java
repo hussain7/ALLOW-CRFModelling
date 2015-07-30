@@ -36,9 +36,24 @@ public class RunProtocol {
 		GenerateGraph TestGraph = new GenerateGraph();
 		for(int j=0;j< TestGraph.graph.size();j++)
 		 { 
-		   TestGraph.graph.get(j).buildLocalKnowlegdeModel();
-		   TestGraph.graph.get(j).buildRoutingModel();
-		   TestGraph.graph.get(j).sentRoutingModeltoNeighbors();
+			AllowNode node = TestGraph.graph.get(j);
+			node.buildLocalKnowlegdeModel();
+			node.buildRoutingModel();
+			node.sentRoutingModeltoNeighbors();
+			node.dumpCrfMap();
+			node.dumpKnowledgeModel();
+			node.dumpRoutingModel();
+			//node.dumpTable();
+		   
+		 }
+		
+		for(int j=0;j< TestGraph.graph.size();j++)
+		 { 
+			AllowNode node = TestGraph.graph.get(j);
+			//node.sentRoutingModeltoNeighbors();
+			//node.sentRoutingModeltoNeighbors();
+			
+			node.dumpTable();
 		   
 		 }
 		// when the initial routing models are build , sent the routing infomration  and update routing tables 

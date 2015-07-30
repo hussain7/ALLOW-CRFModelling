@@ -19,6 +19,7 @@ public class CrfMap {
 	Map<Integer,List<ConfidenceList>> confidenceMap ;
 	int numberofCRFNodes ;
 	Map<Integer,ConfidenceList> constantConfidenceMap ;
+	int instancesIdofLearning ;
 	
 	public CrfMap(File inputfile,String allowNodeId) throws IOException
 	{
@@ -26,7 +27,7 @@ public class CrfMap {
 		confidenceMap		= new HashMap<Integer,List<ConfidenceList>>();
 		constantConfidenceMap = new HashMap<Integer,ConfidenceList>();
 		populateConfidenceMap(inputfile, allowNodeId);
-		
+		instancesIdofLearning =0;
 	
 	}
 	
@@ -35,6 +36,7 @@ public class CrfMap {
 		adjacencyMatrix  	= new int[5][5];
 		confidenceMap		= new HashMap<Integer,List<ConfidenceList>>();
 		constantConfidenceMap = new HashMap<Integer,ConfidenceList>();
+		instancesIdofLearning = 0;
 	}
 
 	public void populateConfidenceMap(File inputfile,String allowNodeId) throws IOException
@@ -102,19 +104,19 @@ public class CrfMap {
 	 
 	public void populateconstantConfidenceMap(String allowNodeId)
 	{
-		int instancesIdofLearning = 0; // taken at index from the list of 
+		// taken at index from the list of 
 		//condeinces for a particuar CRF node
 		
 		int allowNode =Integer.parseInt(allowNodeId) ;
 		instancesIdofLearning  = allowNode%10;
 	//	Set<Integer> keys = confidenceMap.keySet();
-		
+		int temp = instancesIdofLearning;
 		for (Integer key : confidenceMap.keySet()) {
 			
-			ConfidenceList conListCrfNode = confidenceMap.get(key).get(instancesIdofLearning); 
+			ConfidenceList conListCrfNode = confidenceMap.get(key).get(temp); 
 			// on different crf nodes have different instance of learning
 			constantConfidenceMap.put(key, conListCrfNode);
-			instancesIdofLearning++;
+			temp++;
 		}
 
 	}
@@ -136,4 +138,39 @@ public class CrfMap {
 		Set<Integer> number = constantConfidenceMap.keySet();
 		return number;
 	}
+	
+	public void incrementStateofEntity()
+	{
+		
+		instancesIdofLearning++ ;
+	//	Set<Integer> keys = confidenceMap.keySet();
+		int temp = instancesIdofLearning;
+		for (Integer key : confidenceMap.keySet()) {
+			
+			ConfidenceList conListCrfNode = confidenceMap.get(key).get(temp); 
+			// on different crf nodes have different instance of learning
+			constantConfidenceMap.put(key, conListCrfNode);
+			temp++;
+		}
+		
+	}
+	public void dumpCRFMap(String allowNodeId)
+	{
+		StringBuffer s = new StringBuffer();
+		
+		s.append("\n ALLOW ID:"+allowNodeId+"\n" );
+		Set<Integer> keys = getCRFNodesIds() ;
+		
+		for(Integer key:keys)
+		{
+			ConfidenceList list = constantConfidenceMap.get(key);
+			
+			s.append("CrfNode: "+Integer.toString(key)+ "Instance: "+list.getInstance()+"Mean: "+list.getMean()
+					+"Margin: "+list.getMargin()+"\n");
+		}
+		
+	System.out.print(s);
+
+	}
+	
 }

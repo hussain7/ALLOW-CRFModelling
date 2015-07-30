@@ -31,8 +31,8 @@ public class AllowNode //extends GeneralNode
 {
 	String nodeId;
 	
-	 CrfMap CRFmap;
-	List<AllowNode> neighbors= new ArrayList<AllowNode>();
+	CrfMap CRFmap;
+	List<AllowNode> neighbors;
 	RoutingTable routingTable  ;
 	LocalKnowledgeModel model;
 	Query currentQuery;
@@ -42,15 +42,13 @@ public class AllowNode //extends GeneralNode
 	{
 		//super(idNum);
 		nodeId = idNum;
-		neighbors = null;
+		neighbors = new ArrayList<AllowNode>();
 		CRFmap = new CrfMap(inputFile,nodeId);
+		routingTable = new RoutingTable(); 
 		
 	}
 	public void addNeighbor(AllowNode node)
 	{  
-		if(neighbors == null){
-			neighbors= new ArrayList<AllowNode>();}
-		
 		neighbors.add(node);
 	}
 	
@@ -60,11 +58,10 @@ public class AllowNode //extends GeneralNode
 		nodeId= idNum;
 		neighbors = nodeList;
 		CRFmap = new CrfMap(inputFile,nodeId);
-		routingTable = new RoutingTable(); 
-		
+		routingTable = new RoutingTable(); 	
 	}
 
-	 
+	
 	public List<AllowNode> getNeighbors(){
 		
 		return neighbors;
@@ -118,8 +115,7 @@ public class AllowNode //extends GeneralNode
 		   model.addScopeInformation(info);  // add cluster information in the model
 		  
 		}
-		model.getScopesInformation(); // test 
-		
+			
 	}
 	
 	public void populateRoutingModel(CrfMap map)
@@ -181,6 +177,8 @@ public class AllowNode //extends GeneralNode
 					routingTable.getNeighborScopes();
 			List<ScopeInformation> neighborScopesList = neighborScopes.get( iterator.next().getAllowNodeId());
 			// merge distribution of local model and model of neighbor node
+			// check if the list of the neighboring allow node is empty or not , if empty leave that node.
+			if(neighborScopesList != null){
 			for(ScopeInformation scopes:neighborScopesList){
 				
 				  List<Integer>  nodesPresentInScope = scopes.getNodeIdswithScope();
@@ -197,7 +195,7 @@ public class AllowNode //extends GeneralNode
 				 
 			   }
 			 
-			
+		     } 
 		   }	
 		// add with the local knowlegde part for each CRF node
 	 }
@@ -223,7 +221,6 @@ public class AllowNode //extends GeneralNode
 		 // populate this information in routing table for each CRF node
 		 // tempopary store new infomration of CRF nodes .
 		 
-		 
 		 ConfidenceList list = new  ConfidenceList(sum_instances/noofCRFNodes,finalMeanCRFNode,finalMarginCRFNode);
 		 tempCRFMap.getConstantConfidenceMap().put(crfnodeId, list);
 		 
@@ -233,7 +230,8 @@ public class AllowNode //extends GeneralNode
 	// and populate in routing model.
 		
 	  // clustering & populating in routing node	
-		populateRoutingModel(tempCRFMap);	
+		populateRoutingModel(tempCRFMap);			
+		
 		
 	}
 	
@@ -392,6 +390,30 @@ public class AllowNode //extends GeneralNode
 		
 	}
 	
+	public void dumpTable()
+	{
+
+		System.out.println("\n Dumping Rotuing Table:\n ");
+		routingTable.dumpTable(nodeId);
+	}
+	
+	public void dumpKnowledgeModel(){
+		System.out.println("\n Dumping  Knowledge Model:\n ");
+		model.dumpModel(nodeId);
+	}
+	
+	public void dumpRoutingModel(){
+		
+		System.out.println("\n Dumping Routing Knowledge Model:\n ");
+		routingModel.dumpModel(nodeId);
+	}
+	
+   public void dumpCrfMap(){
+		
+		System.out.println("\n Dumping CrfMap:\n ");
+		
+	}
+
 	public void receiveRoutingModelfromNeighbor(List<ScopeInformation> scopeInfo , String neighborNodeId )
 	{
 		// update routing table accordingly
