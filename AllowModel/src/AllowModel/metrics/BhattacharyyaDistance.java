@@ -11,8 +11,11 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 public class BhattacharyyaDistance {
 
 	double distance = new Double(0); 
-
 	
+	/*Bhattacharya Distance : wiki
+	D_B(p,q) = \frac{1}{4} \ln \left ( \frac 1 4 \left( \frac{\sigma_p^2}{\sigma_q^2}+\frac{\sigma_q^2}{\sigma_p^2}+2\right ) \right ) +\frac{1}{4} \left ( \frac{(\mu_p-\mu_q)^{2}}{\sigma_p^2+\sigma_q^2}\right ) 
+			
+	*/
 	 public double calculateDistance(double meanOne,double meanTwo ,double marginOne,double marginTwo)
 	 {
 		 double t1 =0,t2=0,t3=0,t4=0,t5=0,t6;

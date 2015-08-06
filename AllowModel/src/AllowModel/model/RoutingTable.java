@@ -38,13 +38,13 @@ public class RoutingTable {
 	{
 		StringBuffer s = new StringBuffer();
 		
-		s.append("\n ALLOW ID:"+allowNodeId+"\n" );
+		s.append("\n ALLOW ID:"+ allowNodeId+"\n" );
 		Map<String, List<ScopeInformation>>  scopesTable = getNeighborScopes() ;
 		Set<String> scopeSet = scopesTable.keySet();
 		
 		for(String key:scopeSet)
 		{   
-            s.append(" NeiborId:"+key);
+            s.append(" NeiborId:"+key+"\n");
 			List<ScopeInformation> scopeList = scopesTable.get(key);
 			for(ScopeInformation scope:scopeList)
 			{

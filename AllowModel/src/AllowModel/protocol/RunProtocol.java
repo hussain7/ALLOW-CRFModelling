@@ -20,7 +20,7 @@ public class RunProtocol {
 	    
 		
 		
-	/*	Random rand = new Random();
+		Random rand = new Random();
 		boolean flag = true;
 		long startTime=0;
 		long stopTime =0;
@@ -28,10 +28,10 @@ public class RunProtocol {
 		int numFailures=0;
 		double averageRunTime=0.0;
 		double averageHops=0.0;
-		Files file = new Files();
+		
 
 
-		System.out.println(file.FileName);*/
+		
 		//make new graph
 		GenerateGraph TestGraph = new GenerateGraph();
 		for(int j=0;j< TestGraph.graph.size();j++)
@@ -68,39 +68,33 @@ public class RunProtocol {
 		
 /*   
  * 
- *//*
+ */
 		Scanner reader = new Scanner(System.in);
 		int method;
 
-		System.out.println("Enter a search method: ");
-		method = Integer.parseInt(reader.next());
-
-
-
+	//	System.out.println("Enter a search method: ");
+		//method = Integer.parseInt(reader.next());
+   // test 
+		int count =0;
+		for(int i=0; i<10; i++){
+		method =3; int start =  rand.nextInt(TestGraph.n);
+		System.out.println("Query started Allow NodeId  : "+(start+1));
+		String nodeid = TestGraph.graph.get(start).RandomWalkWithNeighborTable(TestGraph.graph.get(start).GenerateQuery(0.35,0.0009));
+		
+		System.out.println("Query answered : "+nodeid);
+		}
 		//How many times to test the system
-		for(int i=0; i<10000; i++){
+	/*	for(int i=0; i<10000; i++){
 			//choose node to start search from
 			int start =  rand.nextInt(TestGraph.n);
 
-			//choose file to search for
-			while(flag){
-				file = new Files();
-
-				//if the node already has this file keep generating
-				if(TestGraph.graph.get(start).fileList.contains(file)){
-					flag = true;
-				}
-				else{
-					flag = false;
-				}
-
-			}
-
-			switch(method) {
-			case 1: tempReturn = TestGraph.graph.get(start).Flood(TestGraph.graph.get(start).GenerateQuery(file));
+		
+			
+			/*switch(method) {
+			case 1: tempReturn = TestGraph.graph.get(start).Flood(TestGraph.graph.get(start).GenerateQuery(0.003f,0.0004f));
 			break;
 
-			case 2: tempReturn = TestGraph.graph.get(start).RandomWalk(TestGraph.graph.get(start).GenerateQuery(file));
+			case 2: tempReturn = TestGraph.graph.get(start).RandomWalk(TestGraph.graph.get(start).GenerateQuery(0.03f));
 			break;
 
 			case 3: tempReturn = TestGraph.graph.get(start).RandomWalkWithNeighborTable(TestGraph.graph.get(start).GenerateQuery(file));
@@ -139,7 +133,7 @@ public class RunProtocol {
 		System.out.println("Number of Failures is: " + numFailures);
 
 
-*/
-	}
 
+	}*/
+	}
 }

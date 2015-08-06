@@ -70,7 +70,7 @@ public class AllowNode //extends GeneralNode
 	public Query GenerateQuery(double queryMean,double margin){
 		
 		List<Integer> queryScopesCRFNodes = new  ArrayList<Integer>();
-		queryScopesCRFNodes.add(2, 3);
+		queryScopesCRFNodes.add(2);
 		Query query = new Query(nodeId, queryMean,margin,queryScopesCRFNodes);
 		currentQuery =query;
 		
@@ -318,7 +318,7 @@ public class AllowNode //extends GeneralNode
 		Random rand = new Random();
 		String neighborToForward = null;
 		boolean neighborHasFile=false;
-		AllowNode neighborWithBestModel = null;
+		String neighborWithBestModel = null;
 		
 		in.allowNodeIdsVisited.add(nodeId);
 		in.hopCount++;
@@ -326,22 +326,61 @@ public class AllowNode //extends GeneralNode
 		boolean queryAnswered = false;
 		
 		// check if query can be answered by the current ALLOW node
+		List<Integer> queryCrfNodes=	in.queryScopeCRFNodes;
+		List<ScopeInformation> scopesLocalModel = model.getScopesInformation();
+		// test for I node basic testing
+		for(ScopeInformation sc:scopesLocalModel)
+		{
+			List<Integer> crfNodeIds = sc.getNodeIdswithScope();
+			if(crfNodeIds.contains(queryCrfNodes.get(0)))
+			{  // check for mean just basic testing
+				if(sc.getscopeMean() <= in.queryMean)
+					{ 
+					  queryAnswered = true;
+					  break;
+					 }
+			}	
 			
-		if( false   )   // critiria for query answer with current ALLOW node
-			queryAnswered=true;
+		}
+		
+  // critiria for query answer with current ALLOW node
 		
 		//Begin Lookup of find the neigbor which has best routing model wrt query
 		
 		neighborToForward  = "";
+		
+		double minMean =1;
+		
+		Map<String,List<ScopeInformation>> map = routingTable.getNeighborScopes();
+	    Set<String> keys =map.keySet();
+		for(String neighbors:keys)
+		{
+			List<ScopeInformation> scopes = map.get(neighbors);
+			if(scopes !=null){
+			for(ScopeInformation sc:scopes)
+			{
+				List<Integer> crfNodeIds = sc.getNodeIdswithScope();
+				if(crfNodeIds.contains(queryCrfNodes.get(0)))
+				{  // check for mean just basic testing
+					if((sc.getscopeMean() < in.queryMean) && (minMean > sc.getscopeMean())  )
+						{ 
+						   neighborWithBestModel = neighbors;
+						   minMean = sc.getscopeMean();
+						}
+				}	
+				
+			 } 
+			}
+		}
+		
+		AllowNode bestNeighborNode = null;
 		for(int i=0;i<neighbors.size();i++ ){
 		  AllowNode node = neighbors.get(i);
-		  if(true)  // condition to check neighbor routing model
-		     { 
-			  neighborWithBestModel = node;
-			  break;
-		     }
-		  }
-		    
+		  if(node.getAllowNodeId().equals(neighborWithBestModel))
+			  bestNeighborNode = node;
+		}
+		  
+		 
 		
 		if(neighbors == null || (neighbors.size() <= 0)){
 			return "NA";
@@ -354,8 +393,8 @@ public class AllowNode //extends GeneralNode
 			return "NA";
 		}
 		else{
-			if(neighbors != null){
-				return neighborWithBestModel.RandomWalkWithNeighborTable(in);
+			if(neighbors != null && bestNeighborNode != null){
+				return bestNeighborNode.RandomWalkWithNeighborTable(in);
 			}
 		}
 		
