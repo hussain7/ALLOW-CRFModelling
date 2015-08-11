@@ -23,8 +23,10 @@
 package AllowModel.clustering;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import AllowModel.crf.CrfMap;
 import AllowModel.metrics.Distance;
@@ -139,11 +141,29 @@ public class KMedoids {
 			changed = recalculateMedoids(assignment, medoids, output, data);
 
 		}
+		
+		// removing duplicates 
+		for (int i = 0; i < numberOfClusters ; i++) {
+			removeDuplicates(output[i] );
+	    }
 
 		    return output;
 
 	}
 
+	
+	public void removeDuplicates(int []y) {
+	    Set<Integer> foundNumbers = new HashSet<Integer>();
+
+	    for(int index = 0; index < y.length; index++) {
+	        if(foundNumbers.contains(y[index])) {
+	            y[index] = 0;
+	        } else {
+	            foundNumbers.add(y[index]);
+	        }
+	    }
+	}
+	
 	/**
 	 * Assign all instances from the data set to the medoids.
 	 * 

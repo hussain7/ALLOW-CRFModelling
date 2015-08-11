@@ -6,6 +6,23 @@ import java.util.*;
 
 public class RunProtocol {
 
+	
+	 public void systemBuildingOne()
+	 {
+		 GenerateGraph TestGraph = new GenerateGraph();
+			for(int j=0;j< TestGraph.graph.size();j++)
+			 { 
+				AllowNode node = TestGraph.graph.get(j);
+				node.buildLocalKnowlegdeModel();
+				node.buildRoutingModel();
+				node.sentRoutingModeltoNeighbors();
+				node.dumpCrfMap();
+				node.dumpKnowledgeModel();
+				node.dumpRoutingModel();
+				//node.dumpTable();
+			   
+			 }
+	 }
 	public static void main(String[] args) throws IOException {
 		
 		// creating three nodes
@@ -37,38 +54,53 @@ public class RunProtocol {
 		for(int j=0;j< TestGraph.graph.size();j++)
 		 { 
 			AllowNode node = TestGraph.graph.get(j);
-			node.buildLocalKnowlegdeModel();
+			node.buildLocalKnowlegdeModel();	
+			//node.dumpTable();
+		   
+		 }
+		
+		// build routing model from the leaves of tree
+
+		// hard coded for a time bieng
+		
+		for(int j=3;j<=6;j++)
+		 { 
+			AllowNode node = TestGraph.graph.get(j);
 			node.buildRoutingModel();
 			node.sentRoutingModeltoNeighbors();
 			node.dumpCrfMap();
 			node.dumpKnowledgeModel();
 			node.dumpRoutingModel();
-			//node.dumpTable();
-		   
-		 }
-		
-		for(int j=0;j< TestGraph.graph.size();j++)
-		 { 
-			AllowNode node = TestGraph.graph.get(j);
 			//node.sentRoutingModeltoNeighbors();
 			//node.sentRoutingModeltoNeighbors();
 			
 			node.dumpTable();
 		   
 		 }
-		// when the initial routing models are build , sent the routing infomration  and update routing tables 
 		
+		// building upper nodes Routing model
+		for(int j=1;j<=2;j++)
+		 { 
+			AllowNode node = TestGraph.graph.get(j);
+			node.buildRoutingModel();
+			node.sentRoutingModeltoNeighbors();
+			node.dumpCrfMap();
+			node.dumpKnowledgeModel();
+			node.dumpRoutingModel();
+			//node.sentRoutingModeltoNeighbors();
+			//node.sentRoutingModeltoNeighbors();
+			
+			node.dumpTable();
+		   
+		 }
+		// finally create model of root node
+		AllowNode node = TestGraph.graph.get(0);
+		node.buildRoutingModel();
+		node.dumpCrfMap();
+		node.dumpKnowledgeModel();
+		node.dumpRoutingModel();
+		node.dumpTable();
 		
-		
-	//	TestGraph.graph.get(1).RandomWalkWithNeighborTable(TestGraph.graph.get(1).GenerateQuery(file));
-		
-		AllowNode node = TestGraph.graph.get(3);
-		System.out.println("");
-		
-		
-/*   
- * 
- */
 		Scanner reader = new Scanner(System.in);
 		int method;
 
@@ -77,9 +109,11 @@ public class RunProtocol {
    // test 
 		int count =0;
 		for(int i=0; i<10; i++){
-		method =3; int start =  rand.nextInt(TestGraph.n);
+		method =3; 
+		//int start =  rand.nextInt(TestGraph.n);
+		int start =0;
 		System.out.println("Query started Allow NodeId  : "+(start+1));
-		String nodeid = TestGraph.graph.get(start).RandomWalkWithNeighborTable(TestGraph.graph.get(start).GenerateQuery(0.35,0.0009));
+		String nodeid = TestGraph.graph.get(start).RandomWalkWithNeighborTable(TestGraph.graph.get(start).GenerateQuery(0.28,0.0009));
 		
 		System.out.println("Query answered : "+nodeid);
 		}

@@ -154,14 +154,15 @@ public class AllowNode //extends GeneralNode
 	 	// build routing model of a ALLOW node initially
 		//get local model first //
 		List<ScopeInformation> localModelScopes = model.getScopesInformation();
-		// get remote scopes information
+	
 		int  noofCRFNodes = CRFmap.getNumberofCRFNodes();
 		Set<Integer> crfNodesIdsList = CRFmap.getCRFNodesIds();
 		
 		// temp map to store output
 		CrfMap tempCRFMap = new CrfMap();
-		
+	 // to get total scopes = scopes(crfnode)*neighbors(crfnode)
 		for(Integer crfnodeId:crfNodesIdsList){
+			int totalScopeScanned = 0;
 			double sum_mean =0; 
 			int sum_instances =0;
 			double sum_margin =0;
@@ -190,7 +191,8 @@ public class AllowNode //extends GeneralNode
 					 
 					 sum_mean =sum_mean + mean*instances;
 					 sum_instances = (int) (sum_instances + instances);
-					 sum_margin = Math.pow(instances, 2)*margin + sum_margin;
+					 sum_margin = ( Math.pow(margin, 2) + Math.pow(mean, 2))*instances  + sum_margin;
+					 totalScopeScanned++;
 				  }
 				 
 			   }
@@ -210,18 +212,24 @@ public class AllowNode //extends GeneralNode
 				 
 				 sum_mean =sum_mean + mean*instances;
 				 sum_instances = (int) (sum_instances + instances);
-				 sum_margin = Math.pow(instances, 2)*margin + sum_margin;
+				 sum_margin = ( Math.pow(margin, 2) + Math.pow(mean, 2))*instances  + sum_margin;
+				 totalScopeScanned++;
 			  }
 			 
 		   }
 		   /// final mean and margin of each CRF node  . let this be populated 
 		 double finalMeanCRFNode = sum_mean/sum_instances;
-		 double finalMarginCRFNode = sum_margin/Math.pow(sum_instances, 2);
-		 
+		 double finalMarginCRFNode =0;
+		 double marginSqure = sum_margin/sum_instances - Math.pow(finalMeanCRFNode,2) ;
+			finalMarginCRFNode = Math.sqrt(marginSqure);
+		
+			int effSumInstance = 0;
+			if(totalScopeScanned != 0)
+			 effSumInstance = sum_instances/totalScopeScanned;
 		 // populate this information in routing table for each CRF node
 		 // tempopary store new infomration of CRF nodes .
 		 
-		 ConfidenceList list = new  ConfidenceList(sum_instances/noofCRFNodes,finalMeanCRFNode,finalMarginCRFNode);
+		 ConfidenceList list = new  ConfidenceList(effSumInstance,finalMeanCRFNode,finalMarginCRFNode);
 		 tempCRFMap.getConstantConfidenceMap().put(crfnodeId, list);
 		 
 		}

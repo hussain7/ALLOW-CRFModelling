@@ -31,7 +31,7 @@ public class GenerateGraph {
 			e.printStackTrace();
 		}
 
-		for(int i=3; i<=n; i++){
+		for(int i=3; i<=7; i++){
 		 
 			try {
 				graph.add(new AllowNode(Integer.toString(i),file));
@@ -43,15 +43,21 @@ public class GenerateGraph {
 			}
 		}
 
-		
-				graph.get(2).addNeighbor(graph.get(1));
-				graph.get(1).addNeighbor(graph.get(2));
-				graph.get(3).addNeighbor(graph.get(4));
-				graph.get(4).addNeighbor(graph.get(3));
-				graph.get(3).addNeighbor(graph.get(1));
+		        graph.get(0).addNeighbor(graph.get(2));
+		        graph.get(2).addNeighbor(graph.get(0));
+		       
+				graph.get(2).addNeighbor(graph.get(5));
+				graph.get(5).addNeighbor(graph.get(2));
+				
+				graph.get(2).addNeighbor(graph.get(6));
+				graph.get(6).addNeighbor(graph.get(2));
+				
 				graph.get(1).addNeighbor(graph.get(3));
-				graph.get(2).addNeighbor(graph.get(4));
-				graph.get(4).addNeighbor(graph.get(2));
+				graph.get(3).addNeighbor(graph.get(1));
+				
+				graph.get(1).addNeighbor(graph.get(4));
+				graph.get(4).addNeighbor(graph.get(1));
+				
 		
 		printGraph();
 		 
