@@ -22,22 +22,28 @@
  */
 package AllowModel.clustering;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
 import AllowModel.crf.CrfMap;
+import AllowModel.metrics.ConfidenceList;
 import AllowModel.metrics.Distance;
 import AllowModel.metrics.MergeDistribution;
 import net.sf.javaml.core.Dataset;
 import net.sf.javaml.core.DefaultDataset;
+import net.sf.javaml.core.DenseInstance;
 import net.sf.javaml.core.Instance;
 import net.sf.javaml.distance.DistanceMeasure;
 import net.sf.javaml.distance.EuclideanDistance;
 import net.sf.javaml.tools.DatasetTools;
 import net.sf.javaml.clustering.Clusterer;
+import net.sf.javaml.clustering.Cobweb;
 
 /**
  * Implementation of the K-medoids algorithm. K-medoids is a clustering
@@ -105,6 +111,47 @@ public class KMedoids {
 		
 	 }
 	 
+	public int[][] clusterCoWeb(int[] data)
+	{
+		Map<Integer,Integer > keyMap = new HashMap<Integer,Integer >();
+		
+		Dataset dataset = new DefaultDataset();
+		// double[] values = new double[] { 0.336697,Math.sqrt(0.000586) };
+		 Map<Integer, ConfidenceList> cMap = map.getConstantConfidenceMap();
+		 int index =0;
+		 for(Integer key:cMap.keySet())
+		 {  
+			 keyMap.put(index, key) ;
+			 ConfidenceList clist =  cMap.get(key);
+		     double[] values = new double[] { clist.getMean(),clist.getMargin() };
+	    	 Instance instance = new DenseInstance(values);
+	         dataset.add(index++,instance);
+	         
+		 }
+		  
+		 Clusterer cw = new Cobweb();
+	     Dataset[] clustersCw = cw.cluster(dataset);
+	     int totalClusters = clustersCw.length;
+	     int[][] output   = new int[][]{{1,2},{3,4}};
+	    /* int i=0;
+	     for(Dataset dataIns:clustersCw)
+	     {
+	    	 int j=0;
+	    	 output[i] = new int[dataIns.size()];
+	    	 while(j < dataIns.size()){
+	    		 
+	    	 Instance inst = dataIns.get(j);
+	    	 int indexInMap = inst.getID();
+	    	 int keyofCrfNodes = keyMap.get(indexInMap);
+	    	 output[i][j] = keyofCrfNodes;
+	    	 j++;
+	    	 }
+	    	 i++;
+	     }
+	     */
+		return output;
+		
+	}
 	 
 	public int[][] cluster(int[] data) {
 		
@@ -146,11 +193,53 @@ public class KMedoids {
 		for (int i = 0; i < numberOfClusters ; i++) {
 			removeDuplicates(output[i] );
 	    }
-
-		    return output;
-
+		
+		int[][]  result = removeDuplicateScopes(output);
+		
+		    return result;
 	}
 
+    public int[][] removeNullScopes(int[][] testArr)
+    {
+         List<int[]> arr = new ArrayList<int[]>();
+    	 
+  	    for (int i = 0; i < numberOfClusters ; i++) {
+  	    	if(testArr[i][0] == 0)
+  	    	 continue;
+  	    	arr.add(testArr[i]) ;
+  	    }
+    	
+		return testArr;
+    	
+    }
+	
+	public  int[][] removeDuplicateScopes(int[][] testArr)
+    {
+        /**
+         * This method will remove the duplicate ROW from 2-D array and replace with {0,0,0}
+         * However i assume array rows  =5 and coloums =3 ;) You can have the solution for that I assume
+         */
+		int length  =  testArr[0].length;
+        HashSet<String> hashSet = new HashSet<String>();
+        int[][] result = new int[numberOfClusters][length];
+        int i = 0;
+        for(int[] a : testArr)
+        {
+            //System.out.println(Arrays.toString(a));
+            //System.out.println(hashSet.contains(a));
+            if(!hashSet.contains(Arrays.toString(a))){
+                hashSet.add(Arrays.toString(a));
+                result[i] = a;
+            }
+            i++;
+        }
+
+        System.out.println("old array : "+Arrays.deepToString(testArr));
+        System.out.println("new array : "+Arrays.deepToString(result));
+
+        return result;
+    }
+	
 	
 	public void removeDuplicates(int []y) {
 	    Set<Integer> foundNumbers = new HashSet<Integer>();
@@ -252,8 +341,9 @@ public class KMedoids {
 	{
 		int centroid = 0;
 		int nearestNodeId = data[0];;
-		double bestDistance = dm.measure(data[0],mean,margin,map);;
+		double bestDistance = dm.measure(data[0],mean,margin,map);
 		for (int i = 1; i < data.length; i++) {
+			if(data[i] == 0) continue;
 			double currentDistance = dm.measure(data[i],mean,margin,map);
 			if(currentDistance < bestDistance )
 			{

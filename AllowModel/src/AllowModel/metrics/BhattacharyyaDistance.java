@@ -19,6 +19,8 @@ public class BhattacharyyaDistance {
 	 public double calculateDistance(double meanOne,double meanTwo ,double marginOne,double marginTwo)
 	 {
 		 double t1 =0,t2=0,t3=0,t4=0,t5=0,t6;
+		// marginOne = Math.sqrt(marginOne);
+		 //marginTwo = Math.sqrt(marginTwo);
 		 
 		 t1= Math.pow((marginOne/marginTwo), 2);
 		 t2 = Math.pow((marginTwo/marginOne), 2) + 2.0 ;
@@ -26,12 +28,12 @@ public class BhattacharyyaDistance {
 				   Math.pow((marginTwo/marginOne), 2) + 2.0 );
 		 t4 =(t1+t2)/4;
 		t5=  Math.log(t4);
-		 t3= 1/4*Math.log(
+		 t3= Math.log(
 			         ( Math.pow((marginOne/marginTwo), 2) +
-					   Math.pow((marginTwo/marginOne), 2) + 2.0 ) /4 );
+					   Math.pow((marginTwo/marginOne), 2) + 2.0 ) /4 )/4;
 		 
 	
-		 t4 = Math.pow( (meanOne - meanTwo ),2 )/(  Math.pow(marginOne,2)  + Math.pow(marginTwo,2) )/4;
+		 t4 = Math.pow( (meanOne - meanTwo ),2 )/(  Math.pow(marginOne,2)  + Math.pow(marginTwo,2) );
 
 		 distance = t3 +t4;
 		//distance =   1/4*Math.log(

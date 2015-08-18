@@ -70,9 +70,9 @@ public class AllowNode //extends GeneralNode
 	public Query GenerateQuery(double queryMean,double margin){
 		
 		List<Integer> queryScopesCRFNodes = new  ArrayList<Integer>();
-		queryScopesCRFNodes.add(2);
+		queryScopesCRFNodes.add(1);
 		Query query = new Query(nodeId, queryMean,margin,queryScopesCRFNodes);
-		currentQuery =query;
+		currentQuery = query;
 		
 		return query;
 	} // end method GenerateQuery
@@ -90,7 +90,7 @@ public class AllowNode //extends GeneralNode
 	    
 	    Set<Integer> CRFNodesIds  = map.getCRFNodesIds();
 	    int[][] output = clustering.cluster(toInt(CRFNodesIds));
-	  
+	//    int[][] output  =  clustering.clusterCoWeb(toInt(CRFNodesIds));
 		return output;
 		
 	}
@@ -147,7 +147,12 @@ public class AllowNode //extends GeneralNode
 	{
 		return nodeId;
 	}
-	
+	public void updateNetwork()
+	{
+		buildRoutingModel(); /// new routing model for the node is formed.
+		routingModel.getScopesInformation();
+		sentRoutingModeltoNeighbors();
+	}
 	public void buildRoutingModel()
 	{
 		routingModel = new RoutingKnowledgeModel(nodeId);
@@ -189,7 +194,7 @@ public class AllowNode //extends GeneralNode
 					 double mean =  scopes.getscopeMean();
 					 double instances = scopes.getscopeInstances();
 					 
-					 sum_mean =sum_mean + mean*instances;
+					 sum_mean = sum_mean + mean*instances;
 					 sum_instances = (int) (sum_instances + instances);
 					 sum_margin = ( Math.pow(margin, 2) + Math.pow(mean, 2))*instances  + sum_margin;
 					 totalScopeScanned++;
@@ -342,7 +347,9 @@ public class AllowNode //extends GeneralNode
 			List<Integer> crfNodeIds = sc.getNodeIdswithScope();
 			if(crfNodeIds.contains(queryCrfNodes.get(0)))
 			{  // check for mean just basic testing
-				if(sc.getscopeMean() <= in.queryMean)
+				double scopeConfidence = confidence(sc.getscopeMean(),sc.getscopeMargin());
+				double queryConfidence = confidence(in.queryMean,in.queryMargin);
+				if(scopeConfidence >= queryConfidence)
 					{ 
 					  queryAnswered = true;
 					  break;
@@ -357,7 +364,8 @@ public class AllowNode //extends GeneralNode
 		
 		neighborToForward  = "";
 		
-		double minMean =1;
+		//double minMean =1;
+		double maxConfidence = 0;
 		
 		Map<String,List<ScopeInformation>> map = routingTable.getNeighborScopes();
 	    Set<String> keys =map.keySet();
@@ -370,11 +378,21 @@ public class AllowNode //extends GeneralNode
 				List<Integer> crfNodeIds = sc.getNodeIdswithScope();
 				if(crfNodeIds.contains(queryCrfNodes.get(0)))
 				{  // check for mean just basic testing
-					if((sc.getscopeMean() < in.queryMean) && (minMean > sc.getscopeMean())  )
+					
+					double scopeConfidence = confidence(sc.getscopeMean(),sc.getscopeMargin());
+					double queryConfidence = confidence(in.queryMean,in.queryMargin);
+					if(  (maxConfidence < scopeConfidence)  )
+					{ 
+					   neighborWithBestModel = neighbors;
+					   maxConfidence = scopeConfidence;
+					}
+					
+					/*if((sc.getscopeMean() < in.queryMean) && (minMean > sc.getscopeMean())  )
 						{ 
 						   neighborWithBestModel = neighbors;
 						   minMean = sc.getscopeMean();
 						}
+					*/
 				}	
 				
 			 } 
@@ -411,6 +429,11 @@ public class AllowNode //extends GeneralNode
 		
 	}//end method Random Walk with neighbor table
 	
+	public double confidence(double mean, double var)
+	{
+		double confidence = Math.sqrt(1-mean)*(1-var);
+		return confidence;
+	}
 	
 	public void getBestNeighbor(Query in){
 		
@@ -458,14 +481,42 @@ public class AllowNode //extends GeneralNode
    public void dumpCrfMap(){
 		
 		System.out.println("\n Dumping CrfMap:\n ");
-		
-	}
+		CRFmap.dumpCRFMap(nodeId);;
+   }
 
-	public void receiveRoutingModelfromNeighbor(List<ScopeInformation> scopeInfo , String neighborNodeId )
+	public void receiveRoutingModelfromNeighbor(List<ScopeInformation> scopeInfoNew , String neighborNodeId )
 	{
+		if( checkChangeRoutingEntry(scopeInfoNew,neighborNodeId) ==  false)
+			return;
+		
 		// update routing table accordingly
-		updateRoutingTable(scopeInfo , neighborNodeId);
-
+		updateRoutingTable(scopeInfoNew , neighborNodeId);
+		updateNetwork();
+        
+	}
+	
+	private boolean checkChangeRoutingEntry(List<ScopeInformation> scopeInfoNew,String neighborNodeId)
+	{
+		Map<String,List<ScopeInformation>>  map = routingTable.getNeighborScopes();;
+		List<ScopeInformation> scopeInfoOld = map.get(neighborNodeId);
+		// if no of scopes changes then certainly a change !!!
+		
+		if(scopeInfoOld.size() != scopeInfoNew.size())
+			return true;
+		
+		/// if any scopes has diffrent number of nodes then change occur !!
+		for(ScopeInformation scopeold:scopeInfoOld)
+		{
+			for(ScopeInformation scopeNew:scopeInfoNew)
+			{
+				if(scopeold.getscopeId() == scopeNew.getscopeId()){
+					if( scopeold.getscopeMean() != scopeNew.getscopeMean() 
+							|| scopeold.getscopeInstances() != scopeNew.getscopeInstances())
+						return true;
+				}
+			}
+		}
+		return false;
 	}
 	
    public void updateRoutingTable(List<ScopeInformation> scopeInfo , String neighborNodeId)

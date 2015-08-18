@@ -39,11 +39,14 @@ public class KnowledgeModel {
 		
 		for(ScopeInformation scope:scopes)
 		{
-		
+			double mean = scope.getscopeMean();
+			double margin = scope.getscopeMargin();
+			double instance  = scope.getscopeInstances();
+			double confidence = Math.sqrt(1-mean)*(1-margin);
 			
-			s.append("ScopeId: "+scope.getscopeId()+ "Instances: "+scope.getscopeInstances()+
-					"CRF Nodes in Scope "+scope.getNodeIdswithScope().toString()+ "Mean: "+scope.getscopeMean()
-					+"Margin: "+scope.getscopeMargin()+"\n");
+			s.append("ScopeId: "+scope.getscopeId()+ " Instances: "+scope.getscopeInstances()+
+					"CRF Nodes in Scope "+scope.getNodeIdswithScope().toString()+ " Mean: "+scope.getscopeMean()
+					+" Margin: "+scope.getscopeMargin()+" Confidence:"+confidence+"\n");
 		}
 		
 	System.out.print(s);

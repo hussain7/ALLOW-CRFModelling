@@ -9,8 +9,8 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
 public class GenerateGraph {
-
-	int n=5;
+    int nodeCount = 0;
+	int n=20;
 	public List<AllowNode> graph = new ArrayList<AllowNode>();
 	UndirectedGraph<String, DefaultEdge> graphVisual =
             new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
@@ -19,30 +19,27 @@ public class GenerateGraph {
 
 		File file = new File("E:\\model.txt") ;
 		
-		try {  // make two ajdacent nodes 
-			graph.add(new AllowNode(Integer.toString(1),file));
-			
-			graph.add(new AllowNode(Integer.toString(2),file));
-			graph.get(0).addNeighbor(graph.get(1));
-			graph.get(1).addNeighbor(graph.get(0));
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		for(int i=3; i<=7; i++){
-		 
-			try {
-				graph.add(new AllowNode(Integer.toString(i),file));
-				
-			//	System.out.println("AllowNode" +i);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		for(int i=0; i< n; i++){
+			 
+				try {
+					graph.add(new AllowNode(Integer.toString(i),file));
+				//	System.out.println("AllowNode" +i);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
+		
+		
+		
+		for(int i=1; i< n; i++){
+		  int parent  = nodeCount/2;
+			graph.get(i).addNeighbor(graph.get(parent));
+			graph.get(parent).addNeighbor(graph.get(i));
+			nodeCount++;
+//	System.out.println("AllowNode" +i);
 		}
-
+/*
 		        graph.get(0).addNeighbor(graph.get(2));
 		        graph.get(2).addNeighbor(graph.get(0));
 		       
@@ -57,8 +54,8 @@ public class GenerateGraph {
 				
 				graph.get(1).addNeighbor(graph.get(4));
 				graph.get(4).addNeighbor(graph.get(1));
-				
-		
+			*/
+
 		printGraph();
 		 
 	}//end constructor
@@ -92,13 +89,14 @@ public class GenerateGraph {
 	public void printGraph()
 	{
 		for(AllowNode a:graph){
-		System.out.println("\n ALLOW Node: " + a.getAllowNodeId() );
+		System.out.println(" ALLOW Node: " + a.getAllowNodeId() );
 		List<AllowNode> list = a.getNeighbors();
-		System.out.print("\n Node Neighbors:");
+		System.out.print(" Node Neighbors:");
 		for(AllowNode n:list)
 		   {
 			System.out.print( n.getAllowNodeId() + " " );
 	       }
+		System.out.print(" \n");
 		}
 		
 	}

@@ -48,10 +48,14 @@ public class RoutingTable {
 			List<ScopeInformation> scopeList = scopesTable.get(key);
 			for(ScopeInformation scope:scopeList)
 			{
-			 	
+				double mean = scope.getscopeMean();
+				double margin = scope.getscopeMargin();
+				double instance  = scope.getscopeInstances();
+				double confidence = Math.sqrt(1-mean)*(1-margin);
+				
 				s.append(" ScopeId: "+scope.getscopeId()+ " Instances: "+scope.getscopeInstances()+
 						" CRF Nodes in Scope "+scope.getNodeIdswithScope().toString()+ " Mean: "+scope.getscopeMean()
-						+" Margin: "+scope.getscopeMargin()+"\n");
+						+" Margin: "+scope.getscopeMargin()+" Confidence "+confidence+"\n");
 			}
 			
 		}

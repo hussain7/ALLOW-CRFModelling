@@ -6,7 +6,7 @@ import java.util.*;
 
 public class RunProtocol {
 
-	
+
 	 public void systemBuildingOne()
 	 {
 		 GenerateGraph TestGraph = new GenerateGraph();
@@ -24,19 +24,10 @@ public class RunProtocol {
 			 }
 	 }
 	public static void main(String[] args) throws IOException {
-		
-		// creating three nodes
-		/*File file = new File("E:\\model.txt") ;
-		AllowNode node1 =  new AllowNode("1", file); 
-		node1.buildLocalKnowlegdeModel();
-		
-		AllowNode node2 =  new AllowNode("2", file);
-		node2.buildLocalKnowlegdeModel();
-		AllowNode node3 =  new AllowNode("3", file);
-		node3.buildLocalKnowlegdeModel();*/
-	    
-		
-		
+	 int test =0;
+	 int testcount =10;
+		while(testcount > 0){
+			
 		Random rand = new Random();
 		boolean flag = true;
 		long startTime=0;
@@ -45,10 +36,7 @@ public class RunProtocol {
 		int numFailures=0;
 		double averageRunTime=0.0;
 		double averageHops=0.0;
-		
-
-
-		
+				
 		//make new graph
 		GenerateGraph TestGraph = new GenerateGraph();
 		for(int j=0;j< TestGraph.graph.size();j++)
@@ -60,8 +48,7 @@ public class RunProtocol {
 		 }
 		
 		// build routing model from the leaves of tree
-
-		// hard coded for a time bieng
+    	// hard coded for a time bieng
 		
 		for(int j=3;j<=6;j++)
 		 { 
@@ -112,10 +99,16 @@ public class RunProtocol {
 		method =3; 
 		//int start =  rand.nextInt(TestGraph.n);
 		int start =0;
-		System.out.println("Query started Allow NodeId  : "+(start+1));
-		String nodeid = TestGraph.graph.get(start).RandomWalkWithNeighborTable(TestGraph.graph.get(start).GenerateQuery(0.28,0.0009));
+		// test query
+		Query query =TestGraph.graph.get(start).GenerateQuery(0.79,0.04);
+		System.out.println(" Query started Allow NodeId  : "+(start+1));
+		String nodeid = TestGraph.graph.get(start).RandomWalkWithNeighborTable(query);
+		if(nodeid.equalsIgnoreCase("4") )
+			test++;
+		System.out.println(" Query answered @ : "+nodeid+"\n");
+		System.out.println(" Query HopeCount : "+ (query.hopCount -1)+"\n");
+		System.out.println(" Query nodes visited @ : "+query.allowNodeIdsVisited.toString()+"\n");
 		
-		System.out.println("Query answered : "+nodeid);
 		}
 		//How many times to test the system
 	/*	for(int i=0; i<10000; i++){
@@ -166,8 +159,13 @@ public class RunProtocol {
 		System.out.println("Average Hops for 10000 runs is: " + (averageHops/(10000.0-numFailures)));
 		System.out.println("Number of Failures is: " + numFailures);
 
+   
 
+	}*/ 
+		testcount--;
+		}
 
-	}*/
+		System.out.println(" Efficiency @ : "+test+"\n");
 	}
+
 }
