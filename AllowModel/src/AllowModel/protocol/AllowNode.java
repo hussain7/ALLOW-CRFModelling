@@ -52,7 +52,7 @@ public class AllowNode //extends GeneralNode
 	 public static final int INFINITE = 999;
 	public AllowNode(String idNum,File inputFile) throws IOException
 	{
-		sizeCrfGraph = 18;
+		sizeCrfGraph = 8;
 		knowledgeUpdate = true;
 		//super(idNum);
 		nodeId = idNum;
@@ -73,19 +73,7 @@ public class AllowNode //extends GeneralNode
 		mat[6][4] = 1; mat[4][6] =1;
 		mat[4][7] = 1; mat[7][4] =1;
 		mat[7][1] = 1; mat[1][7] =1;
-		
-   		mat[8][1] = 1; mat[1][8] =1;
-      		mat[9][8] = 1; mat[8][9] =1;
-      		mat[10][3] = 1; mat[3][10] =1;
-      		mat[11][10] = 1; mat[10][11] =1;
-      		mat[4][11] = 1; mat[11][4] =1;
-      		mat[12][8] = 1; mat[8][12] =1;
-      		mat[12][13] = 1; mat[13][12] =1;
-      		mat[13][14] = 1; mat[14][13] =1;
-      		
-      	   mat[15][7] = 1; mat[7][15] =1;
-  		   mat[6][16] = 1; mat[16][6] =1;
-  		   
+		  		   
 	}
 	
 	public void addNeighbor(AllowNode node)

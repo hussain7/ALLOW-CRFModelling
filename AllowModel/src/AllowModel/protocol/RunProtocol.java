@@ -1,7 +1,10 @@
 package AllowModel.protocol;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 import AllowModel.metrics.NodeIdConfidence;
@@ -11,31 +14,37 @@ public class RunProtocol {
 
 	 
 	public static void main(String[] args) throws IOException {
-	 int testRandomWalk =0;
-	 int testNeighborTable =0 ;
-	 
-	 int testcount =1;
-	
-				
-		//make new graph
-		GenerateGraph TestGraph = new GenerateGraph();
-		AllowNode node = TestGraph.graph.get(1);
-		node.triggerBuildingNetwork();
 		
-		for(int j=0;j< TestGraph.graph.size();j++)
+	
+	
+		/*for(int j=0;j< TestGraph.graph.size();j++)
 		 { 
 		    node = TestGraph.graph.get(j);
 		    //node.buildLocalKnowlegdeModel();
 		    node.dumpKnowledgeModel();
 		    node.dumpTable();
-		 }
+		 }*/
 		
 		
-		int nNodestoCheck = 8 ;
+		FileWriter filewrtier = new FileWriter("D:\\Allowlog.txt");
+		PrintWriter output = new PrintWriter(filewrtier);
+		for(int c=10;c< 100 ;c=c+10 )
+		{	
+			 int testRandomWalk =0;
+			 int testNeighborTable =0 ;
+			 int testcount =1;
+			//make new graph
+			GenerateGraph TestGraph = new GenerateGraph(c);
+			AllowNode node = TestGraph.graph.get(1);
+			node.triggerBuildingNetwork();
+			
+			
+		int nNodestoCheck = c-2 ;
 		double qualityRetrival1 =0;
 		double qualityRetrival2 =0;
 		double qualityRetrivalOverall =0;
 		double qualityBest =0;
+		double qualityRetrivalRandom =0;
 
 		while(testcount > 0){
 			
@@ -73,15 +82,23 @@ public class RunProtocol {
 		/////////////////////
 		if(nodeConfRandom != null){
 		if(nodeConfRandom.getallowNodeId().equalsIgnoreCase("94")|| nodeConfRandom.getallowNodeId().equalsIgnoreCase("12") ||
-				nodeConfRandom.getallowNodeId().equalsIgnoreCase("872") )
-			testRandomWalk++;
+				nodeConfRandom.getallowNodeId().equalsIgnoreCase("872") || nodeConfRandom.getallowNodeId().equalsIgnoreCase("6")
+				|| nodeConfRandom.getallowNodeId().equalsIgnoreCase("7"))
+			 { testRandomWalk++; }
+		else
+		  {
+			// qualityRetrival2 =   qualityRetrival2  + nodeConfTable.getConfidenceValue()/qualityBest ;
+			//System.out.println("Missed Node: "+nodeConfTable.getallowNodeId());
+		  }
+			qualityRetrivalRandom = (qualityRetrivalRandom + nodeConfRandom.getConfidenceValue()/0.99998);
 		}
 		
 		
 
 		if(nodeConfTable != null) {
 			if(nodeConfTable.getallowNodeId().equalsIgnoreCase("94")|| nodeConfTable.getallowNodeId().equalsIgnoreCase("12") ||
-					nodeConfTable.getallowNodeId().equalsIgnoreCase("872") )
+					nodeConfTable.getallowNodeId().equalsIgnoreCase("872") || nodeConfTable.getallowNodeId().equalsIgnoreCase("6")
+					|| nodeConfTable.getallowNodeId().equalsIgnoreCase("7"))
 			{
 			 testNeighborTable++; 
 			 qualityBest =   nodeConfTable.getConfidenceValue();
@@ -92,7 +109,7 @@ public class RunProtocol {
 			// qualityRetrival2 =   qualityRetrival2  + nodeConfTable.getConfidenceValue()/qualityBest ;
 			System.out.println("Missed Node: "+nodeConfTable.getallowNodeId());
 		  }
-			qualityRetrivalOverall = (qualityRetrivalOverall + nodeConfTable.getConfidenceValue()/0.99999);
+			qualityRetrivalOverall = (qualityRetrivalOverall + nodeConfTable.getConfidenceValue()/0.99998);
 		}
 		//qualityRetrivalOverall = (qualityRetrival1 + qualityRetrival2)/ nNodestoCheck;
 		
@@ -162,9 +179,18 @@ public class RunProtocol {
 		System.out.println(" Efficiency Random Walk : "+ testRandomWalk +"\n");
 		System.out.println(" Efficiency Neighbor Tables : "+ testNeighborTable +"\n");
 		
-		System.out.println(" Retreival Qaulity  : "+ qualityRetrivalOverall/nNodestoCheck +"\n");
+		System.out.println(" Retreival Qaulity Table : "+  qualityRetrivalOverall/nNodestoCheck +"\n");
+		System.out.println(" Retreival Qaulity Random : "+ qualityRetrivalRandom/nNodestoCheck +"\n");
 		
 		
+		// write  file to visualize
+		
+		    output.printf("%s\r\n", "Random"+","+nNodestoCheck+","+(qualityRetrivalRandom/nNodestoCheck));
+		    output.printf("%s\r\n", "Allow"+","+nNodestoCheck+","+(qualityRetrivalOverall/nNodestoCheck));
+		
+		
+	 }
+		output.close();
 	}
 
 }

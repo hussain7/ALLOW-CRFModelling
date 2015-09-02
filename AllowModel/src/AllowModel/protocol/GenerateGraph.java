@@ -11,14 +11,15 @@ import org.jgrapht.graph.SimpleGraph;
 public class GenerateGraph {
 	
     int nodeCount = 0;
-	int n=10;
+	int n;
 	public List<AllowNode> graph = new ArrayList<AllowNode>();
 	UndirectedGraph<String, DefaultEdge> graphVisual =
             new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
 
-	public GenerateGraph(){
+	public GenerateGraph(int n){
 
 		File file = new File("E:\\model.txt") ;
+		 this.n = n; 
 		
 		for(int i=0; i< n; i++){
 			 
@@ -41,7 +42,7 @@ public class GenerateGraph {
 //	System.out.println("AllowNode" +i);
 		}
 
-		printGraph();
+	//	printGraph();
 		 
 	}//end constructor
 

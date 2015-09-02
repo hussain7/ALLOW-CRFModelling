@@ -1,5 +1,6 @@
 package AllowModel.crf;
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,7 +26,7 @@ public class CrfMap {
 	{
 	
 		confidenceMap = new HashMap<Integer,List<ConfidenceList>>();
-		int keys = 17;
+		int keys = 7;
 		for(int i=1; i<=keys; i++)
 		{
 		  confidenceMap.put(i, null);
@@ -43,7 +44,7 @@ public class CrfMap {
 	
 		confidenceMap		= new HashMap<Integer,List<ConfidenceList>>();
 		constantConfidenceMap = new HashMap<Integer,ConfidenceList>();
-		int keys = 17;
+		int keys = 7;
 		for(int i=1; i<=keys; i++)
 		{
 		  confidenceMap.put(i, null);
@@ -161,7 +162,7 @@ public class CrfMap {
 		case 3:
 			for (Integer key : confidenceMap.keySet()) {
 				
-	if(key ==5|| key ==6 || key ==15|| key ==14 || key ==12|| key ==13){
+	if(key ==5|| key == 4|| key == 6|| key ==14 || key ==12|| key ==13){
 					
 					n=14511;
 				    testmean = 0.00015832 + key*0.000001 + 4*0.0000001;;
@@ -251,7 +252,7 @@ public class CrfMap {
 		case 94:
             for (Integer key : confidenceMap.keySet()) {
 				
-				if(key ==15 || key==7 ){
+				if(key ==15 || key==7 || key==6){
 					n=14511;
 				    testmean = 0.0000015832 + key*0.000001 + 2*0.0000001;
 					var =  Math.sqrt((1-testmean)*(testmean)/n);
@@ -335,7 +336,7 @@ public class CrfMap {
 		case 6:
           for (Integer key : confidenceMap.keySet()) {
 				
-				if(key ==5 || key ==10|| key ==11){
+				if(key ==5 || key ==1 || key == 2||key == 3 || key == 7 || key == 6){
 					n=14511;
 				    testmean = 0.00015832 + key*0.0000001 + 6*0.0000001;
 					var =  Math.sqrt((1-testmean)*(testmean)/n);
@@ -357,7 +358,7 @@ public class CrfMap {
 		case 7:
 	          for (Integer key : confidenceMap.keySet()) {
 					
-					if( key ==13 || key ==12 || key ==14){
+					if( key ==13 || key ==12 || key ==14 || key ==7 ){
 						n=14511;
 					    testmean = 0.00015832 + key*0.0000001 + 7*0.0000001;
 						var =  Math.sqrt((1-testmean)*(testmean)/n);
