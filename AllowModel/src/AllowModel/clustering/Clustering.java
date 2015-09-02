@@ -31,54 +31,7 @@ public class Clustering {
 		
 	  Dataset dataset = new DefaultDataset();
 	   
-	    //	Instance instance = new DenseInstance(values);
-	    	//Instance instance = InstanceTools.randomInstance(2);
-	  
-	
-	       /* 
-	        n=14;
-		 	   testmean = 0.90900;	
-		   dev =  Math.sqrt((1-testmean)*(testmean)/n);
-		  
-		    	 values = new double[] { testmean, dev};
-		    	instance = new NodeInstance(values, 6);
-		        dataset.add(instance);
-
-
-		        n=14;
-			 	   testmean = 0.98900;
-			   dev =  Math.sqrt((1-testmean)*(testmean)/n);
-			  
-			    	 values = new double[] { testmean, dev};
-			    	instance = new NodeInstance(values, 7);
-			        dataset.add(instance);
-			        
-			        
-			  	  n=14011;
-			       testmean = 0.00025832;	
-				   dev =  Math.sqrt((1-testmean)*(testmean)/n);
-				  
-				    	 values = new double[] { testmean, dev};
-				    	instance = new NodeInstance(values, 8);
-				        dataset.add(instance);
-				        
-				        n=14;
-					    testmean = 0.90900;	
-					   dev =  Math.sqrt((1-testmean)*(testmean)/n);
-					  
-					    	 values = new double[] { testmean, dev};
-					    	instance = new NodeInstance(values, 9);
-					        dataset.add(instance);
-					        
-					        
-					        n=12;
-						 	   testmean = 0.98900;
-							   dev =  Math.sqrt((1-testmean)*(testmean)/n);
-							  
-							    	 values = new double[] { testmean, dev};
-							    	instance = new NodeInstance(values, 10);
-							        dataset.add(instance);*/
-	        
+	   
 	 int n=14511;
        double testmean = 0.00015832;	
 	 double   dev =  Math.sqrt((1-testmean)*(testmean)/n);
@@ -104,8 +57,8 @@ public class Clustering {
 	 	    	instance = new NodeInstance(values, 2);
 	 	        dataset.add(instance);
 	        
-	   n=11;
-	   testmean = 0.969060;
+	   n=14;
+	   testmean = 0.919060;
 	   dev =  Math.sqrt((1-testmean)*(testmean)/n);     
 	    
 	   values = new double[] { testmean, dev};
@@ -136,49 +89,36 @@ public class Clustering {
 			 	        instance = new NodeInstance(values, 6);
 			 	        dataset.add(instance);
 			 	        
-			 	       n=14;     
-				 	   testmean = 0.90900;
+			 	       n=14591;
+				        testmean = 0.00015832;
 				 	   dev =  Math.sqrt((1-testmean)*(testmean)/n);     	 	    
 				 	   values = new double[] { testmean, dev};
 				 	        instance = new NodeInstance(values, 7);
 				 	        dataset.add(instance);
-		    //	Instance instance = new DenseInstance(values);
-		    	//Instance instance = InstanceTools.randomInstance(2);
-	  /*   for(int i = 0; i < 4; i++) {
-		    	double[] values = new double[] { 0.336697,Math.sqrt(0.000586) };
-		    	Instance instance = new DenseInstance(values);
-		        dataset.add(i,instance);
-	     }
-	     
-	     for(int i = 4; i < 6; i++) {
-		    	double[] values = new double[] {0.649580,Math.sqrt(0.001507) };
-		    	Instance instance = new DenseInstance(values);
-		       // dataset.add(instance);
-		       dataset.add(i, instance);
-	     }
-	   
-	     for(int i = 6; i < 10; i++) {
-		    //	double[] values = new double[] {0.076208,Math.sqrt(0.000078) };
-		    	double[] values = new double[] { 0.332121,Math.sqrt(0.001507) };
-		    	Instance instance = new DenseInstance(values);
-		        dataset.add(i,instance);
-	     }
-	    
-	*/
+
 	     /* Load a dataset */
      //   Dataset data = FileHandler.loadDataset(new File("E:\\iris.data.txt"), 4, ",");
-	   AllowDistance allowDistance = new AllowDistance();
+				 	        int mat[][] =new int[8][8];
+				 	        mat[0][1] = 1; mat[1][0] =1;
+				 			mat[1][2] = 1; mat[2][1] =1;
+				 			mat[2][3] = 1; mat[3][2] =1;
+				 			mat[2][4] = 1; mat[4][2] =1;
+				 			mat[4][5] = 1; mat[5][4] =1;
+				 			mat[6][4] = 1; mat[4][6] =1;
+				 			mat[4][7] = 1; mat[7][4] =1;
+				 			
+	   AllowDistance allowDistance = new AllowDistance(mat);
 	 //  JaccardIndexSimilarity distance = new JaccardIndexSimilarity();
 	   MCL mcl = new MCL(allowDistance);
 	   
-        Clusterer km = new KMedoids(3,100,allowDistance); 
+       // Clusterer km = new KMedoids(3,100,allowDistance); 
        // Clusterer km = new net.sf.javaml.clustering.KMedoids();
-        Clusterer cw = new Cobweb();
+        //Clusterer cw = new Cobweb();
         /*
          * Cluster the data, it will be returned as an array of data sets, with
          * each dataset representing a cluster
          */
-        Dataset[] clusters = km.cluster(dataset);
+      //  Dataset[] clusters = km.cluster(dataset);
         Dataset[] clustersMacl  = mcl.cluster(dataset);
     //    Dataset[] clustersCw = cw.cluster(dataset);
    

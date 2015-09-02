@@ -43,10 +43,39 @@ public class MergeDistribution {
 		double margin_sum =0;
 		double product =1;
 		Map<Integer,ConfidenceList > confidenceMap =  map.getConstantConfidenceMap();
-		 int len = length(nodeData);
+		 int len = nodeData.length;
 		 
 		for(int i=0; i < len; i++){
-			if(nodeData[i] == 0) continue; // nodeid can not be zero so skip it .
+			//if(nodeData[i] == 0) continue; // nodeid can not be zero so skip it .
+	    	ConfidenceList nodeIdList =  confidenceMap.get(nodeData[i]);
+	    	int instances = nodeIdList.getInstance();
+	    	double margin =	nodeIdList.getMargin();
+	    	double mean  = nodeIdList.getMean();
+	    	product =  mean*instances;
+	    	sum_mean = sum_mean + product;
+	    	sum_instances = sum_instances + instances;
+	    	margin_sum = ( Math.pow(margin, 2) + Math.pow(mean, 2))*instances  + margin_sum;   
+	   
+		}
+		
+		mean = sum_mean/sum_instances;
+		double marginSqure = margin_sum/sum_instances - Math.pow(mean,2) ;
+		margin = Math.sqrt(marginSqure);
+		noOfInstances = (int) (sum_instances/len);
+	}
+	
+	public MergeDistribution( Map<Integer,ConfidenceList > confidenceMap, int[] nodeData)  // nodeId data 
+	{
+		//removeDuplicates(nodeData);
+		double sum_mean =0;
+		double sum_instances =0;
+		double margin_sum =0;
+		double product =1;
+		
+		 int len = nodeData.length;
+		 
+		for(int i=0; i < len; i++){
+			//if(nodeData[i] == 0) continue; // nodeid can not be zero so skip it .
 	    	ConfidenceList nodeIdList =  confidenceMap.get(nodeData[i]);
 	    	int instances = nodeIdList.getInstance();
 	    	double margin =	nodeIdList.getMargin();

@@ -25,4 +25,8 @@ public List<Integer> getQueryScopeCRFNodes()
    return 	queryScopeCRFNodes;
   }
 
+public String getQuerySourceAllowId()
+{
+ return 	from;
+}
 }

@@ -2,6 +2,7 @@ package AllowModel.metrics;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class ScopeInformation {
 
@@ -51,6 +52,16 @@ public class ScopeInformation {
 		
 	}
 	
+	public void dumpScopeInformation()
+	{
+		StringBuffer s = new StringBuffer();
+			
+			s.append(" Instance: "+noofInstances +" Mean: "+ scopeMean
+					+" Margin: "+scopeMargin +" Nodes "+nodeIds.toString()+ "\n");
+		
+	System.out.print(s);
+
+	}
 	
 	
 }

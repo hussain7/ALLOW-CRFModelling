@@ -15,7 +15,7 @@ import AllowModel.metrics.ConfidenceList;
 
 public class CrfMap {
 
-	int[][] adjacencyMatrix  ; //
+	
 	Map<Integer,List<ConfidenceList>> confidenceMap ;
 	int numberofCRFNodes ;
 	Map<Integer,ConfidenceList> constantConfidenceMap ;
@@ -23,34 +23,40 @@ public class CrfMap {
 	
 	public CrfMap(File inputfile,String allowNodeId) throws IOException
 	{
-		adjacencyMatrix  	= new int[6][6];  // six nodes of crf model
-		buildAjdMatrix(adjacencyMatrix);
-		confidenceMap		= new HashMap<Integer,List<ConfidenceList>>();
+	
+		confidenceMap = new HashMap<Integer,List<ConfidenceList>>();
+		int keys = 17;
+		for(int i=1; i<=keys; i++)
+		{
+		  confidenceMap.put(i, null);
+		}
+		
 		constantConfidenceMap = new HashMap<Integer,ConfidenceList>();
-		populateConfidenceMap(inputfile, allowNodeId);
+		//populateConfidenceMap(inputfile, allowNodeId);
 		instancesIdofLearning =0;
+		populatingConstantMap(allowNodeId);
 	
 	}
 	
 	public CrfMap() {
 		// TODO Auto-generated constructor stub
-		adjacencyMatrix  	= new int[6][6];
-		buildAjdMatrix(adjacencyMatrix);
+	
 		confidenceMap		= new HashMap<Integer,List<ConfidenceList>>();
 		constantConfidenceMap = new HashMap<Integer,ConfidenceList>();
+		int keys = 17;
+		for(int i=1; i<=keys; i++)
+		{
+		  confidenceMap.put(i, null);
+		}
+		numberofCRFNodes = keys;
+
 		instancesIdofLearning = 0;
+		
 	}
 	
-	private void buildAjdMatrix(int [][]mat)
-	{
-		mat[0][1] = 1; mat[1][0] =1;
-		mat[1][2] = 1; mat[2][1] =1;
-		mat[2][3] = 1; mat[3][2] =1;
-		mat[2][4] = 1; mat[4][2] =1;
-		mat[4][5] = 1; mat[5][4] =1;		
-	}
 
-	public void populateConfidenceMap(File inputfile,String allowNodeId) throws IOException
+
+	/*public void populateConfidenceMap(File inputfile,String allowNodeId) throws IOException
 	{
 		BufferedReader br = new BufferedReader(new FileReader(inputfile));
 	    try {
@@ -105,10 +111,6 @@ public class CrfMap {
 	}
 	
 
-	public int[][] getAdjacencyMatrix()
-	{
-		return adjacencyMatrix;
-	}
 	public Map<Integer,List<ConfidenceList>> getConfidenceMap()
 	{
 		return confidenceMap;
@@ -131,251 +133,332 @@ public class CrfMap {
 			temp++;
 		}
 
-	}
+	}*/
 	 //testing !!!!
-	private void populatingConstantMap(String allowNodeId){
+	
+	public void populatingConstantMap(String allowNodeId){
 		
 		int allowNode =Integer.parseInt(allowNodeId) ;
-		int x =11;
-		double testmean = Math.exp(-x/300);
-		double var =  (1-testmean)*testmean/x;
+		int n=11;
+	 	double  testmean = 0.969060;
+		double   var =  Math.sqrt((1-testmean)*(testmean)/n);
 		
 		switch(allowNode){
 		
-		case 1:
+		case 0:
 			for (Integer key : confidenceMap.keySet()) {
 			
-			if(key ==1 || key ==2){
-				x=11;
-				
-				testmean = 0.969060 ;
-				 var =  Math.sqrt((1-testmean)*(testmean)/x);
-				ConfidenceList list = new ConfidenceList(x,testmean,var );
+		
+				n=11;
+			    testmean =  0.969060 + key*0.0001 + 2*0.00001;
+				var =  Math.sqrt((1-testmean)*(testmean)/n);
+				ConfidenceList list = new ConfidenceList(n,testmean,var );
 				constantConfidenceMap.put(key, list);
-			}
 			
-			if(key ==3 || key ==4){
-				x=381;
-				testmean = 0.336697;
-				 var =  Math.sqrt((1-testmean)*(testmean)/x);
-				ConfidenceList list = new ConfidenceList(x,testmean,var );
-				constantConfidenceMap.put(key, list);
-			}
 			
 		   }
 			break;
-		case 2:
+		case 3:
 			for (Integer key : confidenceMap.keySet()) {
 				
-				if(key ==1 || key ==2 || key==3){
-					x=381;
+	if(key ==5|| key ==6 || key ==15|| key ==14 || key ==12|| key ==13){
 					
-					testmean = 0.336697;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
+					n=14511;
+				    testmean = 0.00015832 + key*0.000001 + 4*0.0000001;;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
 					constantConfidenceMap.put(key, list);
 				}
-				
-				if(key ==4 || key==5 ){
-					x=1021;
-					
-					testmean =0.054088;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
+				else
+				{
+					n=11;
+				    testmean =  0.969060 +  key*0.00001 + 1*0.0000001;;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
 					constantConfidenceMap.put(key, list);
-				}
-				
-				if(key ==6 || key==7 || key==8){
-					x=1451;
-					testmean = 0.015832;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
-				
-				if(key ==9 || key==10 ){
-					x=381;
-					testmean = 0.336697;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
-				
-			   }
-			break;
-		case 3:
-               for (Integer key : confidenceMap.keySet()) {
-				
-				if(key ==1 || key ==2){
-					x=11;
-					testmean = 0.969060 ;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
-				
-				if(key ==3 || key ==4){
-					x=381;
-					testmean = 0.336697;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
-				if(key ==4 || key==5 ||key==6 ){
-					x=151;
-					
-					testmean = 0.649580;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
-				
-				if(key ==7 || key==8 || key==9 || key==10  ){
-					x=381;
-					testmean = 0.336697;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
-				
-			   }
-			break;
-		case 4:
-              for (Integer key : confidenceMap.keySet()) {
-				
-				if(key ==1 || key ==2){
-					x=1451;
-					testmean = 0.015832;
-					
-					var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
-				
-				if(key ==3 || key ==4){
-					x=11;
-					
-					testmean = 0.969060 ;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
-				if(key ==5 || key ==9 || key ==5 || key ==6 || key ==7 || key ==8||key ==10 ){
-					x=621;
-					testmean = 0.169605;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
-				
+				 }
 				
 			   }
 			break;
 		case 5:
                for (Integer key : confidenceMap.keySet()) {
 				
-				if(key ==1 || key ==2){
-					x=151;
-					
-					testmean = 0.649580;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
+            	
+    					n=11;
+    				    testmean =  0.969060 +  key*0.00001 + 1*0.0000001;;
+    					var =  Math.sqrt((1-testmean)*(testmean)/n);
+    					ConfidenceList list = new ConfidenceList(n,testmean,var );
+    					constantConfidenceMap.put(key, list);
+    				 
+            	  
 				
-				if(key ==3 || key ==4 || key ==5 || key ==6 || key ==7 || key ==8){
-					x=1451;
-					testmean = 0.015832;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
+			   }
+			break;
+		case 1:
+              for (Integer key : confidenceMap.keySet()) {
 				
-				if(key ==9 || key ==10){
-					x=11;
+				if(key ==2|| key ==3 ||key == 10 || key == 11   ){
 					
-					testmean = 0.969060 ;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
+					n=14511;
+				    testmean = 0.00015832 + key*0.000001 + 4*0.0000001;;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
 					constantConfidenceMap.put(key, list);
 				}
+				else
+				{
+					n=11;
+				    testmean =  0.969060 +  key*0.00001 + 1*0.0000001;;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
+					constantConfidenceMap.put(key, list);
+				 }
+				 
+			   }
+			break;
+		case 4:
+               for (Integer key : confidenceMap.keySet()) {
+				
+            	   n=11;
+				    testmean =  0.969060 + key*0.00000005 + 4*0.0000001;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
+					constantConfidenceMap.put(key, list);
+				
+			   }
+			break;
+		case 2:
+             for (Integer key : confidenceMap.keySet()) {
+				
+				if(key ==6 || key ==16|| key ==8 || key ==12){
+					n=14511;
+				    testmean = 0.0000015832 + key*0.000001 + 2*0.0000001;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
+					constantConfidenceMap.put(key, list);
+				}
+				else
+				{
+					n=11;
+				    testmean =  0.969060+ key*0.000001 + 2*0.0000001;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
+					constantConfidenceMap.put(key, list);
+				 }
+				
+			   }
+			break;
+		case 94:
+            for (Integer key : confidenceMap.keySet()) {
+				
+				if(key ==15 || key==7 ){
+					n=14511;
+				    testmean = 0.0000015832 + key*0.000001 + 2*0.0000001;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
+					constantConfidenceMap.put(key, list);
+				}
+				else
+				{
+					n=11;
+				    testmean =  0.969060+ key*0.000001 + 2*0.0000001;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
+					constantConfidenceMap.put(key, list);
+				 }
+				
+			   }
+			break;
+		case 150:
+            for (Integer key : confidenceMap.keySet()) {
+				
+				if(key ==6 || key==5 ){
+					n=14511;
+				    testmean = 0.0000015832 + key*0.000001 + 2*0.0000001;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
+					constantConfidenceMap.put(key, list);
+				}
+				else
+				{
+					n=11;
+				    testmean =  0.969060+ key*0.000001 + 2*0.0000001;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
+					constantConfidenceMap.put(key, list);
+				 }
+				
+			   }
+			break;
+		case 872:
+            for (Integer key : confidenceMap.keySet()) {
+				
+				if( key ==7 || key ==5 ){
+					n=14511;
+				    testmean = 0.00000000000015832 + key*0.000001 + 2*0.0000001;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
+					constantConfidenceMap.put(key, list);
+				}
+				else
+				{
+					n=11;
+				    testmean =  0.969060+ key*0.000001 + 2*0.0000001;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
+					constantConfidenceMap.put(key, list);
+				 }
+				
+			   }
+			break;
+		case 59:
+            for (Integer key : confidenceMap.keySet()) {
+				
+				if(key ==2 || key==3 || key ==2 || key==10 ){
+					n=14511;
+				    testmean = 0.0000015832 + key*0.000001 + 2*0.0000001;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
+					constantConfidenceMap.put(key, list);
+				}
+				else
+				{
+					n=11;
+				    testmean =  0.969060+ key*0.000001 + 2*0.0000001;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
+					constantConfidenceMap.put(key, list);
+				 }
 				
 			   }
 			break;
 		case 6:
-             for (Integer key : confidenceMap.keySet()) {
-				
-				if(key ==1 || key ==2){
-					x=11;
-					
-					testmean = 0.969060 ;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
-				
-				if(key ==3 || key ==4){  
-					x=1451;
-					testmean = 0.015832;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
-				if(key ==5 || key==6 ){
-					x=381;
-					testmean = 0.336697;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
-				
-				if(key ==6 || key==7 || key==8 || key==9 || key==10  ){
-					x=381;
-					testmean = 0.336697;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
-				
-			   }
-			break;
-		case 7:
           for (Integer key : confidenceMap.keySet()) {
 				
-				if(key ==1 || key ==2){
-					x=381;
-					testmean = 0.336697;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
+				if(key ==5 || key ==10|| key ==11){
+					n=14511;
+				    testmean = 0.00015832 + key*0.0000001 + 6*0.0000001;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
+					constantConfidenceMap.put(key, list);
+				}
+				else
+				{
+					n=11;
+				    testmean =  0.969060 + key*0.0000001 + 6*0.0000001;
+					var =  Math.sqrt((1-testmean)*(testmean)/n);
+					ConfidenceList list = new ConfidenceList(n,testmean,var );
 					constantConfidenceMap.put(key, list);
 				}
 				
-				if(key ==3 || key ==4){
-					x=901;
-					
-					testmean = 0.076208 ;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
-				if(key ==5 || key==6 ){
-					x=381;
-					testmean = 0.336697;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
-				
-				if(key ==6 || key==7 || key==8 || key==9 || key==10  ){
-					x=151;
-				
-					testmean = 0.649580;
-					 var =  Math.sqrt((1-testmean)*(testmean)/x);
-					ConfidenceList list = new ConfidenceList(x,testmean,var );
-					constantConfidenceMap.put(key, list);
-				}
 			   }
 			break;
+			
+		case 7:
+	          for (Integer key : confidenceMap.keySet()) {
+					
+					if( key ==13 || key ==12 || key ==14){
+						n=14511;
+					    testmean = 0.00015832 + key*0.0000001 + 7*0.0000001;
+						var =  Math.sqrt((1-testmean)*(testmean)/n);
+						ConfidenceList list = new ConfidenceList(n,testmean,var );
+						constantConfidenceMap.put(key, list);
+					}
+					else
+					{
+						n=11;
+					    testmean =  0.969060 + key*0.0000001 + 7*0.0000001;
+						var =  Math.sqrt((1-testmean)*(testmean)/n);
+						ConfidenceList list = new ConfidenceList(n,testmean,var );
+						constantConfidenceMap.put(key, list);
+					}
+					
+				   }
+				break;
+		case 18:
+	          for (Integer key : confidenceMap.keySet()) {
+					
+					if(key ==4 || key ==2 || key ==3 || key ==5){
+						n=14511;
+					    testmean = 0.00015832 + key*0.0000001 + 7*0.0000001;
+						var =  Math.sqrt((1-testmean)*(testmean)/n);
+						ConfidenceList list = new ConfidenceList(n,testmean,var );
+						constantConfidenceMap.put(key, list);
+					}
+					else
+					{
+						n=11;
+					    testmean =  0.969060 + key*0.0000001 + 7*0.0000001;
+						var =  Math.sqrt((1-testmean)*(testmean)/n);
+						ConfidenceList list = new ConfidenceList(n,testmean,var );
+						constantConfidenceMap.put(key, list);
+					}
+					
+				   }
+				break;
+		case 12:
+	          for (Integer key : confidenceMap.keySet()) {
+					
+					if( key ==1|| key ==2 || key ==10 || key ==3 ){
+						n=14511;
+					    testmean = 0.0015832 + key*0.0000001 + 7*0.0000001;
+						var =  Math.sqrt((1-testmean)*(testmean)/n);
+						ConfidenceList list = new ConfidenceList(n,testmean,var );
+						constantConfidenceMap.put(key, list);
+					}
+					else
+					{
+						n=11;
+					    testmean =  0.969060 + key*0.0000001 + 7*0.0000001;
+						var =  Math.sqrt((1-testmean)*(testmean)/n);
+						ConfidenceList list = new ConfidenceList(n,testmean,var );
+						constantConfidenceMap.put(key, list);
+					}
+					
+				   }
+				break;
+		case 15:
+	          for (Integer key : confidenceMap.keySet()) {
+					
+					if(key ==2 || key ==3 || key ==1 ){
+						n=14511888;
+					    testmean = 0.0000000000000015832 + key*0.000001 + 2*0.0000001;
+						var =  Math.sqrt((1-testmean)*(testmean)/n);
+						ConfidenceList list = new ConfidenceList(n,testmean,var );
+						constantConfidenceMap.put(key, list);
+					}
+					else
+					{
+						n=11;
+					    testmean =  0.969060 + key*0.0000001 + 7*0.0000001;
+						var =  Math.sqrt((1-testmean)*(testmean)/n);
+						ConfidenceList list = new ConfidenceList(n,testmean,var );
+						constantConfidenceMap.put(key, list);
+					}
+					
+				   }
+				break;
+				default :
+				     for (Integer key : confidenceMap.keySet()) {
+							
+							if(key ==6 ){
+								n=14511;
+							    testmean = 0.00015832 + key*0.0000001 + 1222*0.0000001;
+								var =  Math.sqrt((1-testmean)*(testmean)/n);
+								ConfidenceList list = new ConfidenceList(n,testmean,var );
+								constantConfidenceMap.put(key, list);
+							}
+							else
+							{
+								n=11;
+							    testmean =  0.969060 + key*0.0000001 + 1223*0.0000001;
+								var =  Math.sqrt((1-testmean)*(testmean)/n);
+								ConfidenceList list = new ConfidenceList(n,testmean,var );
+								constantConfidenceMap.put(key, list);
+							}
+							
+						   }
+				     break;
 		}
 		
 		
@@ -400,10 +483,8 @@ public class CrfMap {
 	}
 	
 	
-	
 	public void incrementStateofEntity()
-	{
-		
+	{	
 		instancesIdofLearning++ ;
 	//	Set<Integer> keys = confidenceMap.keySet();
 		int temp = instancesIdofLearning;

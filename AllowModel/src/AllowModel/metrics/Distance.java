@@ -30,11 +30,8 @@ import net.sf.javaml.core.Instance;
 import net.sf.javaml.distance.AbstractDistance;
 
 
-public class Distance extends AbstractDistance {
+public class Distance  {
 
-    /**
-     * 
-     */
 	BhattacharyyaDistance distance  = new BhattacharyyaDistance() ;
     private static final long serialVersionUID = -5844297515283628612L;
 
@@ -43,8 +40,6 @@ public class Distance extends AbstractDistance {
     	Map<Integer,ConfidenceList> confidenceMap =  map.getConstantConfidenceMap();
     	ConfidenceList nodeIdList1 =  confidenceMap.get(nodeId1);
     	ConfidenceList nodeIdList2 =  confidenceMap.get(nodeId2);
-    	
-    	
         double dist = 0;
         
         distance.calculateDistance(nodeIdList1.getMean(), nodeIdList2.getMean()

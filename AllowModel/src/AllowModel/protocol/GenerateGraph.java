@@ -9,8 +9,9 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
 public class GenerateGraph {
+	
     int nodeCount = 0;
-	int n=20;
+	int n=10;
 	public List<AllowNode> graph = new ArrayList<AllowNode>();
 	UndirectedGraph<String, DefaultEdge> graphVisual =
             new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
@@ -39,22 +40,6 @@ public class GenerateGraph {
 			nodeCount++;
 //	System.out.println("AllowNode" +i);
 		}
-/*
-		        graph.get(0).addNeighbor(graph.get(2));
-		        graph.get(2).addNeighbor(graph.get(0));
-		       
-				graph.get(2).addNeighbor(graph.get(5));
-				graph.get(5).addNeighbor(graph.get(2));
-				
-				graph.get(2).addNeighbor(graph.get(6));
-				graph.get(6).addNeighbor(graph.get(2));
-				
-				graph.get(1).addNeighbor(graph.get(3));
-				graph.get(3).addNeighbor(graph.get(1));
-				
-				graph.get(1).addNeighbor(graph.get(4));
-				graph.get(4).addNeighbor(graph.get(1));
-			*/
 
 		printGraph();
 		 

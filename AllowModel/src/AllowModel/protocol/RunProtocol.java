@@ -4,110 +4,104 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import AllowModel.metrics.NodeIdConfidence;
+
 public class RunProtocol {
 
 
-	 public void systemBuildingOne()
-	 {
-		 GenerateGraph TestGraph = new GenerateGraph();
-			for(int j=0;j< TestGraph.graph.size();j++)
-			 { 
-				AllowNode node = TestGraph.graph.get(j);
-				node.buildLocalKnowlegdeModel();
-				node.buildRoutingModel();
-				node.sentRoutingModeltoNeighbors();
-				node.dumpCrfMap();
-				node.dumpKnowledgeModel();
-				node.dumpRoutingModel();
-				//node.dumpTable();
-			   
-			 }
-	 }
+	 
 	public static void main(String[] args) throws IOException {
-	 int test =0;
-	 int testcount =10;
-		while(testcount > 0){
-			
-		Random rand = new Random();
-		boolean flag = true;
-		long startTime=0;
-		long stopTime =0;
-		int tempReturn=0;
-		int numFailures=0;
-		double averageRunTime=0.0;
-		double averageHops=0.0;
+	 int testRandomWalk =0;
+	 int testNeighborTable =0 ;
+	 
+	 int testcount =1;
+	
 				
 		//make new graph
 		GenerateGraph TestGraph = new GenerateGraph();
+		AllowNode node = TestGraph.graph.get(1);
+		node.triggerBuildingNetwork();
+		
 		for(int j=0;j< TestGraph.graph.size();j++)
 		 { 
-			AllowNode node = TestGraph.graph.get(j);
-			node.buildLocalKnowlegdeModel();	
-			//node.dumpTable();
-		   
+		    node = TestGraph.graph.get(j);
+		    //node.buildLocalKnowlegdeModel();
+		    node.dumpKnowledgeModel();
+		    node.dumpTable();
 		 }
 		
-		// build routing model from the leaves of tree
-    	// hard coded for a time bieng
 		
-		for(int j=3;j<=6;j++)
-		 { 
-			AllowNode node = TestGraph.graph.get(j);
-			node.buildRoutingModel();
-			node.sentRoutingModeltoNeighbors();
-			node.dumpCrfMap();
-			node.dumpKnowledgeModel();
-			node.dumpRoutingModel();
-			//node.sentRoutingModeltoNeighbors();
-			//node.sentRoutingModeltoNeighbors();
-			
-			node.dumpTable();
-		   
-		 }
-		
-		// building upper nodes Routing model
-		for(int j=1;j<=2;j++)
-		 { 
-			AllowNode node = TestGraph.graph.get(j);
-			node.buildRoutingModel();
-			node.sentRoutingModeltoNeighbors();
-			node.dumpCrfMap();
-			node.dumpKnowledgeModel();
-			node.dumpRoutingModel();
-			//node.sentRoutingModeltoNeighbors();
-			//node.sentRoutingModeltoNeighbors();
-			
-			node.dumpTable();
-		   
-		 }
-		// finally create model of root node
-		AllowNode node = TestGraph.graph.get(0);
-		node.buildRoutingModel();
-		node.dumpCrfMap();
-		node.dumpKnowledgeModel();
-		node.dumpRoutingModel();
-		node.dumpTable();
-		
-		Scanner reader = new Scanner(System.in);
-		int method;
+		int nNodestoCheck = 8 ;
+		double qualityRetrival1 =0;
+		double qualityRetrival2 =0;
+		double qualityRetrivalOverall =0;
+		double qualityBest =0;
 
+		while(testcount > 0){
+			
+			Random rand = new Random();
+			boolean flag = true;
+			long startTime=0;
+			long stopTime =0;
+			int tempReturn=0;
+			int numFailures=0;
+			double averageRunTime=0.0;
+			double averageHops=0.0;
 	//	System.out.println("Enter a search method: ");
 		//method = Integer.parseInt(reader.next());
    // test 
 		int count =0;
-		for(int i=0; i<10; i++){
-		method =3; 
+		
+		for(int i=1 ; i<= nNodestoCheck; i++){
+		//method =3; 
 		//int start =  rand.nextInt(TestGraph.n);
-		int start =0;
+		int start = i;
 		// test query
-		Query query =TestGraph.graph.get(start).GenerateQuery(0.79,0.04);
-		System.out.println(" Query started Allow NodeId  : "+(start+1));
-		String nodeid = TestGraph.graph.get(start).RandomWalkWithNeighborTable(query);
-		if(nodeid.equalsIgnoreCase("4") )
-			test++;
-		System.out.println(" Query answered @ : "+nodeid+"\n");
-		System.out.println(" Query HopeCount : "+ (query.hopCount -1)+"\n");
-		System.out.println(" Query nodes visited @ : "+query.allowNodeIdsVisited.toString()+"\n");
+		Query queryRandom =TestGraph.graph.get(start).GenerateQuery(0.79,0.04);
+		Query queryTable =TestGraph.graph.get(start).GenerateQuery(0.79,0.04);
+		
+	
+	//	System.out.println(" Query started Allow NodeId  : "+(start));
+		
+		//String nodeConfTable = TestGraph.graph.get(start).RandomWalkWithNeighborTable(queryTable);
+		NodeIdConfidence nodeConfTable = TestGraph.graph.get(start).RandomWalkWithNeighborTableQRetreival(queryTable);
+		
+		// test with random walk 
+		
+		NodeIdConfidence nodeConfRandom = TestGraph.graph.get(start).RandomWalk(queryRandom);
+		
+		/////////////////////
+		if(nodeConfRandom != null){
+		if(nodeConfRandom.getallowNodeId().equalsIgnoreCase("94")|| nodeConfRandom.getallowNodeId().equalsIgnoreCase("12") ||
+				nodeConfRandom.getallowNodeId().equalsIgnoreCase("872") )
+			testRandomWalk++;
+		}
+		
+		
+
+		if(nodeConfTable != null) {
+			if(nodeConfTable.getallowNodeId().equalsIgnoreCase("94")|| nodeConfTable.getallowNodeId().equalsIgnoreCase("12") ||
+					nodeConfTable.getallowNodeId().equalsIgnoreCase("872") )
+			{
+			 testNeighborTable++; 
+			 qualityBest =   nodeConfTable.getConfidenceValue();
+			 //qualityRetrival1 =  qualityRetrival1 + 1 ;
+			} 
+		 else
+		  {
+			// qualityRetrival2 =   qualityRetrival2  + nodeConfTable.getConfidenceValue()/qualityBest ;
+			System.out.println("Missed Node: "+nodeConfTable.getallowNodeId());
+		  }
+			qualityRetrivalOverall = (qualityRetrivalOverall + nodeConfTable.getConfidenceValue()/0.99999);
+		}
+		//qualityRetrivalOverall = (qualityRetrival1 + qualityRetrival2)/ nNodestoCheck;
+		
+		
+		
+		//System.out.println(" Query answered @ : "+nodeConfRandom.getallowNodeId()+"\n");
+		//System.out.println(" Query HopeCount : "+ (query.hopCount -1)+"\n");
+		System.out.println(" Query nodes visited (Random) @ : "+queryRandom.allowNodeIdsVisited.toString()+"\n");
+		System.out.println(" Query nodes visited (Table) @ : "+queryTable.allowNodeIdsVisited.toString()+"\n");
 		
 		}
 		//How many times to test the system
@@ -165,7 +159,12 @@ public class RunProtocol {
 		testcount--;
 		}
 
-		System.out.println(" Efficiency @ : "+test+"\n");
+		System.out.println(" Efficiency Random Walk : "+ testRandomWalk +"\n");
+		System.out.println(" Efficiency Neighbor Tables : "+ testNeighborTable +"\n");
+		
+		System.out.println(" Retreival Qaulity  : "+ qualityRetrivalOverall/nNodestoCheck +"\n");
+		
+		
 	}
 
 }
