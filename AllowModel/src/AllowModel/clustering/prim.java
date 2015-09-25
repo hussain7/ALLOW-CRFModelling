@@ -29,6 +29,7 @@ public class prim
     private int numberofvertices;
     private double adjacencyMatrix[][];
     private double key[];
+
     public static final int INFINITE = 999;
     private int parent[];
     private static CrfMap crfmap;
@@ -415,6 +416,10 @@ public class prim
         
         if(finalCluster ==  null) {  finalCluster = superClusters ;}
         
+        // modifies cluster so that  clusters with same confidence are mergred into one. 
+        // if there is a connection from any node of the cluster 1 to cluster 2 , there can be merged togethre.
+        
+       // mergingSameCluster();
        // System.out.println("Prune Edge "+(count+1) +" Confidence : "+ confidenceEffective);
     
         finalCluster.size();
@@ -437,6 +442,20 @@ public class prim
 		return output;
     }
  
+    public void mergingSameCluster()
+    {
+    	
+    	 for (int source = 1; source <= numberofvertices; source++)
+         {
+             for (int destination = 1; destination <= numberofvertices; destination++)
+             {
+                 this.adjacencyMatrix[source][destination] = adjacencyMatrix[source][destination];
+             }
+         }
+    	
+    }
+    
+    
     
     public double sum(List<Double> listWeights)
     {   double sum =0;

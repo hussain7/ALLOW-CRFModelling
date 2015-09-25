@@ -12,6 +12,7 @@ public class GenerateGraph {
 	
     int nodeCount = 0;
 	int n;
+	int sizeofcrfGraph = 8;
 	public List<AllowNode> graph = new ArrayList<AllowNode>();
 	UndirectedGraph<String, DefaultEdge> graphVisual =
             new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
@@ -24,7 +25,7 @@ public class GenerateGraph {
 		for(int i=0; i< n; i++){
 			 
 				try {
-					graph.add(new AllowNode(Integer.toString(i),file));
+					graph.add(new AllowNode(Integer.toString(i),file,sizeofcrfGraph));
 				//	System.out.println("AllowNode" +i);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -35,7 +36,7 @@ public class GenerateGraph {
 		
 		
 		for(int i=1; i< n; i++){
-		  int parent  = nodeCount/2;
+		  int parent  = nodeCount/20;
 			graph.get(i).addNeighbor(graph.get(parent));
 			graph.get(parent).addNeighbor(graph.get(i));
 			nodeCount++;
