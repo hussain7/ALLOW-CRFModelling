@@ -11,18 +11,22 @@ import AllowModel.metrics.NodeIdConfidence;
 import AllowModel.model.ExplorationQueryElement;
 
 public class RunProtocol {
+	
+	// configuartion parameters as data members 
 	static int selectivity = 20;
+	static int progapationHopCount = 12;
+	static int numberExploreQueries = 100;
+	static int maximumLimitExploreQueries = 200;
+	static int allowNodesNumber = 200;
+	static int queryConfiguartion = 6;
+  	static double qualityRetrivalOverall =0;
+	static double qualityBest =0;
+    
+	
+	// query learning apporoach
     @SuppressWarnings("unused")
-	public static void queryLearning() throws IOException
+	public static void queryLearning(String filename) throws IOException
     {
-    	
-    	int progapationHopCount = 12;
-    	int numberExploreQueries = 100;
-    	int allowNodesNumber = 200;
-    	int queryConf = 6;
-    	
-    	double qualityRetrivalOverall =0;
-		double qualityBest =0;
     	
 		GenerateGraph TestGraph = new GenerateGraph(allowNodesNumber);
 		//AllowNode node = TestGraph.graph.get(1);
@@ -36,17 +40,18 @@ public class RunProtocol {
 	    	}
 		
 		Random rand = new Random();
-		FileWriter filewrtier = new FileWriter("D:\\QueryLearning.txt");
+		 // add path of output file
+		FileWriter filewrtier = new FileWriter(filename);
 		PrintWriter output = new PrintWriter(filewrtier);
 		for(int sel =1 ;sel <= selectivity ;sel++) {
-		for(numberExploreQueries=200 ;numberExploreQueries <=200;numberExploreQueries= numberExploreQueries+100){
-			
-	   
+		for( ;numberExploreQueries <= maximumLimitExploreQueries; 
+			  numberExploreQueries = numberExploreQueries + 100){
+			 
     	for(int c=1; c <= numberExploreQueries ; c++)
 		{	
     		// for generating different types of queries
     	List<Integer> queryScopeCRFNodes =  new ArrayList<Integer>();
-    	generateRandomQueryScopes( queryScopeCRFNodes,  rand.nextInt(queryConf));
+    	generateRandomQueryScopes( queryScopeCRFNodes,  rand.nextInt(queryConfiguartion));
     	
        for(int k=0; k< networkSize ;k++)
     	{
@@ -91,37 +96,34 @@ public class RunProtocol {
     	 
     	}
     	
-    	//testQuery(TestGraph,output,numberExploreQueries);
      }	
 		testQuery(TestGraph,output,numberExploreQueries,sel);
 		}
 		output.close();
    }
     
-    public static void generateRandomQueryScopes(List<Integer> queryScopeCRFNodes, int conf){
+    // generate diffrent random queries used in query learning approach
+    // and query scopes ( crf nodes to be queried ) are added 
+    public static void generateRandomQueryScopes(List<Integer> queryScopeCRFNodes, int configurationParam){
     	
-    	if(conf ==1) {
+    	if(configurationParam ==1) {
     	queryScopeCRFNodes.add(1);
     	queryScopeCRFNodes.add(2);
     	}
-    	else if(conf == 2){
+    	else if(configurationParam == 2){
     		queryScopeCRFNodes.add(1);
         	queryScopeCRFNodes.add(2);
         	queryScopeCRFNodes.add(3);
         	
     	}
-        else if(conf == 3){
+        else if(configurationParam == 3){
         	queryScopeCRFNodes.add(4);
         	queryScopeCRFNodes.add(5);
         	queryScopeCRFNodes.add(6);
         	queryScopeCRFNodes.add(7);
-        	
-        	// queryScopeCRFNodes.add(13);
-         	//queryScopeCRFNodes.add(14);
-          //queryScopeCRFNodes.add(15);
-        //	queryScopeCRFNodes.add(1);
+  
     	}
-        else if(conf == 4){
+        else if(configurationParam == 4){
 	
         	queryScopeCRFNodes.add(2);
         	queryScopeCRFNodes.add(3);
@@ -131,7 +133,7 @@ public class RunProtocol {
        	//queryScopeCRFNodes.add(14);
         
          }
-         else if(conf == 5){
+         else if(configurationParam == 5){
         	 queryScopeCRFNodes.add(1);
          	queryScopeCRFNodes.add(2);
          	queryScopeCRFNodes.add(3);
@@ -143,7 +145,7 @@ public class RunProtocol {
             //queryScopeCRFNodes.add(18);
           //	queryScopeCRFNodes.add(17);
     	}
-         else if(conf == 6){
+         else if(configurationParam == 6){
         	 queryScopeCRFNodes.add(6);
          	 queryScopeCRFNodes.add(2);
          	 queryScopeCRFNodes.add(3);
@@ -203,10 +205,12 @@ public class RunProtocol {
 		//queryCrfNodes.add(3);
 		
 		Random rand = new Random();
-		 int num =rand.nextInt(10);
+		// lest generate the query on some random Allow node in a graph
+		int num =rand.nextInt(10);
 		int n = 1700;
 		double queryTestMean = Math.exp((double)-n/300) ;;
 		double queryTestDevation =  Math.sqrt((1-queryTestMean )*(queryTestMean )/n);
+		
 		Query queryTable =TestGraph.graph.get(num).GenerateQuery(queryTestMean,queryTestDevation,queryCrfNodes);
 		AllowNode allNode = TestGraph.graph.get(num);
 		NodeIdConfidence conf =TestGraph.graph.get(num).RandomWalkTestQuery(queryTable, allNode.getAllowNodeId());
@@ -223,12 +227,12 @@ public class RunProtocol {
 		
     }
     
-    
-	public static void main(String[] args) throws IOException {
+    public static void knowledgeAggregation(String filename) throws IOException
+    {
+    	
+      int count_max = 500, increment =1100, initial = 500;
 		
-		queryLearning();
-		/*int count_max = 500, increment =1100, initial = 500;
-		// test query input parameters 
+		//////////////// test query input parameters ///////////////////////////////
 		List<Integer> queryCrfNodes  = new ArrayList<Integer>();
 		queryCrfNodes.add(1);
 		queryCrfNodes.add(2);
@@ -238,20 +242,24 @@ public class RunProtocol {
 		double queryTestMean = Math.exp((double)-n/300) ;;
 		double queryTestDevation =  Math.sqrt((1-queryTestMean )*(queryTestMean )/n);
 		
-		Query queryTable =TestGraph.graph.get(start).GenerateQuery(queryTestMean,queryTestDevation,queryCrfNodes);
-		 	
-		FileWriter filewrtier = new FileWriter("D:\\Allowlog.txt");
+		///////////////////////////////////////////////////////////////////////
+		
+		
+		FileWriter filewrtier = new FileWriter(filename);
 		PrintWriter output = new PrintWriter(filewrtier);
 		
 	  int numberofNeighbors = 21 ;
 	  for(int netsCount=1; netsCount<=numberofNeighbors ;netsCount++){
 		   
+		  //
 		for(int c=initial; c <= count_max ; c=c+increment )
 		{	
 			 int testRandomWalk =0;
-			 int testNeighborTable =0 ;
+			 // way to propgate building neibhors table on basis of Knowledge Aggregation
+			 int testNeighborTable =0 ; 
 			 int testcount =1;
 			//make new graph
+			 //creating graph with c nodes . 
 			GenerateGraph TestGraph = new GenerateGraph(c);
 			AllowNode node = TestGraph.graph.get(1);
 			
@@ -277,6 +285,7 @@ public class RunProtocol {
 			    }
 			 }
 			
+	/////////// check half of the nodes after building the knowledge network /////////////
 		int nNodestoCheck = c/2 ;
 		double qualityRetrival1 =0;
 		double qualityRetrival2 =0;
@@ -343,7 +352,7 @@ public class RunProtocol {
 		}
 		
 		System.out.println(" Efficiency Random Walk : "+ testRandomWalk +"\n");
-		System.out.println(" Efficiency Neighbor Tables : "+ testNeighborTable +"\n");
+		System.out.println(" Efficiency Knowledge Aggregation : "+ testNeighborTable +"\n");
 		
 		
 		//System.out.println(" Query answered @ : "+nodeConfRandom.getallowNodeId()+"\n");
@@ -365,140 +374,23 @@ public class RunProtocol {
 		output.printf("%d,%d,%f,%f\n",nNodestoCheck,netsCount,(qualityRetrivalOverall/nNodestoCheck),
 		    		(qualityRetrivalRandom/nNodestoCheck));
 		
-		// write  file to visualize
-		
-		  //  output.printf("%s\r\n", "Random"+","+nNodestoCheck+","+(qualityRetrivalRandom/nNodestoCheck));
-		    //output.printf("%s\r\n", "Allow"+","+nNodestoCheck+","+(qualityRetrivalOverall/nNodestoCheck));
 	
 	    }
 	  }
-		output.close();*/
+		output.close();
 		
-	
+    	
+    }
+	public static void main(String[] args) throws IOException {
+		
+		// please create a file first if not exist
+
+		if(args.toString().equalsIgnoreCase("KA"))
+			knowledgeAggregation("C:\\KnowledgeAggregation.txt");
+		else
+	  	queryLearning("C:\\QueryLearning.txt");
+	 
 	}
  
-	/*
-    public static void main(String[] args) throws IOException {
-		
-		
-		FileWriter filewrtier = new FileWriter("D:\\Allowlog.txt");
-		PrintWriter output = new PrintWriter(filewrtier);
-		
-		
-		// test on 100 nodes 
-		
-		GenerateGraph TestGraph = new GenerateGraph(100);
-		AllowNode node = TestGraph.graph.get(1);
-		node.triggerBuildingNetwork();
-		
-		
-		for(int numInstances=11;numInstances< 4000;numInstances= numInstances+10 ){
-			int testRandomWalk =0;
-			 int testNeighborTable =0 ;
-			 int testcount =1;
-			
-		for(int j=0;j< TestGraph.graph.size();j++)
-		{	
-			 
-			 node = TestGraph.graph.get(j);
-			 
-			 // good learning for crf node =7 
-			 if(node.getAllowNodeId().equals("872") || node.getAllowNodeId().equals("94")||
-					 node.getAllowNodeId().equals("12") || node.getAllowNodeId().equals("6") ||
-					 node.getAllowNodeId().equals("7")){
-				 
-				 node.updateLocalKnowlegdeModel(numInstances); 
-			 }
-	    }
-			/*for(int j=0;j< TestGraph.graph.size();j++)
-			 { 
-			    node = TestGraph.graph.get(j);
-			    //node.buildLocalKnowlegdeModel();
-			    node.dumpKnowledgeModel();
-			    node.dumpTable();
-			 }
-			
-		int nNodestoCheck = 98 ;
-		double qualityRetrival1 =0;
-		double qualityRetrival2 =0;
-		double qualityRetrivalOverall =0;
-		double qualityBest =0;
-		double qualityRetrivalRandom =0;
-
-		
-			Random rand = new Random();
-			boolean flag = true;
-			long startTime=0;
-			long stopTime =0;
-			int tempReturn=0;
-			int numFailures=0;
-			double averageRunTime=0.0;
-			double averageHops=0.0;
-	//	System.out.println("Enter a search method: ");
-		//method = Integer.parseInt(reader.next());
-   // test 
-		int count =0;
-		
-		for(int i=1 ; i<= nNodestoCheck; i++){
-		//method =3; 
-		//int start =  rand.nextInt(TestGraph.n);
-		int start = i;
-		// test query
-	//	Query queryRandom =TestGraph.graph.get(start).GenerateQuery(0.79,0.04);
-		Query queryTable =TestGraph.graph.get(start).GenerateQuery(0.79,0.04);
-		
 	
-	//	System.out.println(" Query started Allow NodeId  : "+(start));
-		
-		//String nodeConfTable = TestGraph.graph.get(start).RandomWalkWithNeighborTable(queryTable);
-		NodeIdConfidence nodeConfTable = TestGraph.graph.get(start).RandomWalkWithNeighborTableQRetreival(queryTable);
-	
-
-		if(nodeConfTable != null) {
-			if(nodeConfTable.getallowNodeId().equalsIgnoreCase("94")|| nodeConfTable.getallowNodeId().equalsIgnoreCase("12") ||
-					nodeConfTable.getallowNodeId().equalsIgnoreCase("872") || nodeConfTable.getallowNodeId().equalsIgnoreCase("6")
-					|| nodeConfTable.getallowNodeId().equalsIgnoreCase("7"))
-			{
-			 testNeighborTable++; 
-			 qualityBest =   nodeConfTable.getConfidenceValue();
-			 //qualityRetrival1 =  qualityRetrival1 + 1 ;
-			} 
-		 else
-		  {
-			// qualityRetrival2 =   qualityRetrival2  + nodeConfTable.getConfidenceValue()/qualityBest ;
-			System.out.println("Missed Node: "+nodeConfTable.getallowNodeId());
-		  }
-			qualityRetrivalOverall = (qualityRetrivalOverall + nodeConfTable.getConfidenceValue()/0.99998);
-		}
-		//qualityRetrivalOverall = (qualityRetrival1 + qualityRetrival2)/ nNodestoCheck;
-		
-		
-		
-		//System.out.println(" Query answered @ : "+nodeConfRandom.getallowNodeId()+"\n");
-		//System.out.println(" Query HopeCount : "+ (query.hopCount -1)+"\n");
-		//System.out.println(" Query nodes visited (Random) @ : "+queryRandom.allowNodeIdsVisited.toString()+"\n");
-		System.out.println(" Query nodes visited (Table) @ : "+queryTable.allowNodeIdsVisited.toString()+"\n");
-		
-		  }
-	
-		
-	//	System.out.println(" Efficiency Random Walk : "+ testRandomWalk +"\n");
-		//System.out.println(" Efficiency Neighbor Tables : "+ testNeighborTable +"\n");
-		
-		System.out.println(" Retreival Qaulity Table : "+  qualityRetrivalOverall/nNodestoCheck +"\n");
-		//System.out.println(" Retreival Qaulity Random : "+ qualityRetrivalRandom/nNodestoCheck +"\n");
-		
-		
-		// write  file to visualize
-		
-		   // output.printf("%s\r\n", "Random"+","+nNodestoCheck+","+(qualityRetrivalRandom/nNodestoCheck));
-		    output.printf("%d,%f\n",numInstances,(qualityRetrivalOverall/nNodestoCheck));
-		
-		}
-	
-		output.close(); 
-	  }
-	}*/
-
-    
 }
